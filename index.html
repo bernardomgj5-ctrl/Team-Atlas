@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Team Atlas — Pokémon Champions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>:root{--bg:#e8ecf0;--panel:#ffffff;--ink:#16202c;--muted:#5a6777;--line:#d2d9e1;--soft:#f3f5f8;--ac:#0f8a9c;--good:#1f8a4c;--bad:#c23a2e;--neu:#7a6a2a;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10161e;--panel:#18212c;--ink:#e6ecf2;--muted:#95a3b3;--line:#283444;--soft:#1f2a37;--good:#4cc27d;--bad:#ef6a5c;--neu:#d8c06a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10161e;--panel:#18212c;--ink:#e6ecf2;--muted:#95a3b3;--line:#283444;--soft:#1f2a37;--good:#4cc27d;--bad:#ef6a5c;--neu:#d8c06a;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.45 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+h1,h2,h3,h4,.tchip b,.t-mono,.val,.big b,.vs,.plus{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 12px 8px}
+.brand{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font:700 22px/1 "Barlow Condensed",sans-serif;letter-spacing:.2px}
+.brand small{font:500 13px "Barlow",sans-serif;color:var(--muted)}
+#teams{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+#teams::-webkit-scrollbar{display:none}
+.tchip{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:5px 10px 6px;cursor:pointer;max-width:170px;text-align:left}
+.tchip b{font-size:18px;line-height:1;color:var(--ac)}
+.tchip span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.tchip.on{border-color:var(--ac);box-shadow:inset 0 -4px 0 var(--ac)}
+main{max-width:980px;margin:0 auto;padding:14px 12px 96px}
+.h{font-size:30px;margin:4px 0 10px;line-height:1}.h span{color:var(--ac)}
+.h2{font-size:22px;margin:22px 0 8px}
+.muted{color:var(--muted);font-size:14px}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px;color:var(--muted)}
+/* ---- cartão visual ---- */
+.tile{position:relative;display:grid;place-items:center;flex:0 0 auto;border-radius:14px;text-decoration:none;color:#fff;
+ background:linear-gradient(135deg,var(--c1) 0 50%,var(--c2) 50% 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28),0 1px 0 rgba(0,0,0,.08);overflow:hidden}
+.tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.tile.lg{width:128px;height:128px;border-radius:18px}.tile.md{width:84px;height:84px}.tile.sm{width:46px;height:46px;border-radius:10px}
+.t-mono{font-weight:800;letter-spacing:1px;text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 12px rgba(0,0,0,.25);line-height:1}
+.lg .t-mono{font-size:54px;margin-top:-14px}.md .t-mono{font-size:34px;margin-top:-10px}.sm .t-mono{font-size:19px}
+.t-role{position:absolute;top:5px;right:5px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.92);font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.md .t-role{width:24px;height:24px;font-size:13px;top:4px;right:4px}
+.sm .t-role{width:17px;height:17px;font-size:9.5px;top:2px;right:2px}
+.t-flag{position:absolute;top:5px;left:6px;font:800 12px/1 "Barlow Condensed",sans-serif;background:rgba(0,0,0,.45);padding:3px 5px;border-radius:5px}
+.sm .t-flag{font-size:9px;padding:2px 3px;top:2px;left:2px}
+.t-cta{position:absolute;left:0;right:0;bottom:0;padding:5px 0 6px;text-align:center;font:700 11px/1 "Barlow",sans-serif;letter-spacing:.6px;background:rgba(0,0,0,.5)}
+.md .t-cta{font-size:9px;padding:4px 0}
+.t-cta.sm{left:auto;right:2px;bottom:2px;width:14px;height:14px;padding:0;display:grid;place-items:center;border-radius:4px;font-size:10px}
+.pk{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;min-width:0}
+.pk-name{font-weight:700;font-size:13.5px;line-height:1.15;max-width:110px}
+.pk.sm .pk-name{font-size:12px;max-width:72px}
+.role-line,.pk-sub{font-size:12px;color:var(--muted);line-height:1.2}
+.type{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--tc);color:#fff;margin:0 4px 4px 0;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+/* ---- times ---- */
+.hero{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--ac);border-radius:14px;padding:14px 14px 10px;margin-bottom:14px}
+.hero h1{font-size:34px;margin:0 0 6px;line-height:1;color:var(--ac)}.hero h1 span{color:var(--ink)}
+.plan{margin:0 0 10px;max-width:70ch}
+.wins{display:grid;gap:6px}.win{display:flex;gap:8px;align-items:flex-start;font-size:14.5px}.win b{flex:0 0 22px;text-align:center}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.mon{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;grid-template-columns:128px 1fr;grid-template-rows:auto auto auto 1fr;column-gap:12px;align-items:start}
+.mon .tile{grid-row:1/5}
+.mon h2{margin:0;font-size:25px;line-height:1.05}
+.fn{font-size:13.5px;margin:3px 0 6px;line-height:1.25}.types{margin-bottom:2px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:14px}.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:600}
+.more{grid-column:1/-1;margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.more summary,.legend summary,.form summary{cursor:pointer;font-weight:600;color:var(--ac);font-size:14px}
+.moves{display:grid;grid-template-columns:1fr 1fr;gap:4px;list-style:none;padding:0;margin:8px 0 0}.moves li{background:var(--soft);border-radius:8px;padding:5px 8px;font-size:13.5px;font-weight:600}
+.rules{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:14px}.rules h3{margin:0 0 6px;font-size:21px}.rules ul{margin:0;padding-left:20px}.rules li{margin:3px 0}
+.legend{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.lg-grid{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 4px;font-size:14px}
+.flagdemo{background:#555;color:#fff;border-radius:4px;padding:0 4px;font-size:12px}
+.credit{font-size:12.5px;color:var(--muted);margin-top:18px}
+/* ---- segmentos ---- */
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.seg button{border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:600 13.5px "Barlow",sans-serif;cursor:pointer}
+.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+/* ---- leads ---- */
+.leads{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.lead{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--soft)}
+.tag.rec{background:#f6d860;color:#3a2e00}.tag.fast{background:#cfe0ff;color:#12305e}.tag.gen{background:var(--soft)}.tag.sit{background:#ead7f5;color:#3d1557}
+.duo{display:flex;align-items:flex-start;justify-content:center;gap:10px}
+.plus{font-size:34px;line-height:84px;color:var(--muted)}
+.when{margin-top:10px;font-size:14px}.when b,.gp b{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.arrow{text-align:center;color:var(--ac);font-weight:800;font-size:20px;line-height:1;margin:4px 0}
+.gp{background:var(--soft);border-left:4px solid var(--ac);border-radius:8px;padding:8px 10px;font-size:14.5px}
+/* ---- matchups ---- */
+.mlist{display:grid;gap:10px}
+.mu{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.mu>summary{cursor:pointer;list-style:none}.mu>summary::-webkit-details-marker{display:none}
+.mu-head{display:flex;align-items:center;gap:10px}.mu-opp{display:flex;gap:4px;flex:0 0 auto}
+.mu-t{display:flex;flex-direction:column;gap:2px;min-width:0}.mu-t b{font-size:16px}
+.diff{font-size:12px;font-weight:700;align-self:flex-start;padding:1px 8px;border-radius:999px;border:1.5px solid currentColor}
+.diff.g{color:var(--good)}.diff.r{color:var(--bad)}.diff.n{color:var(--neu)}
+.versus{display:grid;grid-template-columns:1fr;gap:6px;margin:14px 0 6px}
+@media (min-width:640px){.versus{grid-template-columns:1fr auto 1fr;align-items:center}}
+.side .lab{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:6px}
+.vs{font-size:26px;font-weight:800;color:var(--ac);text-align:center;line-height:1}
+.opprow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.blk{margin-top:12px}.blk h4{margin:0 0 6px;font-size:18px}
+.blk .row{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.blk .row p{margin:0;font-size:14.5px}
+.warn h4{color:var(--bad)}.ok h4{color:var(--good)}
+.four{display:flex;gap:10px;flex-wrap:wrap}
+.rule{margin-top:12px;background:var(--soft);border-radius:8px;padding:8px 10px;font-size:14px}
+/* ---- speed ---- */
+.spd{list-style:none;padding:0;margin:0;display:grid;gap:4px}
+.spd li{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(44px,22%) 40px;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 8px}
+.spd li.bench{background:transparent;border-style:dashed}
+.sp-n{display:flex;flex-direction:column;min-width:0}.sp-n b{font-size:14px;line-height:1.2}
+.tm{font-size:11.5px;font-weight:700;color:var(--ac)}.bm{font-size:11.5px;color:var(--muted)}
+.bar{height:10px;background:var(--soft);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.bench .bar i{background:var(--muted)}
+.val{font-size:20px;text-align:right}
+/* ---- partidas ---- */
+.teamstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.ts{position:relative;overflow:hidden;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:6px 8px 10px;text-align:left;cursor:pointer}
+.ts b{display:block;font:700 18px "Barlow Condensed",sans-serif;color:var(--ac)}.ts span{font-size:12.5px}
+.ts i{position:absolute;left:0;bottom:0;height:4px;background:var(--good)}.ts.on{border-color:var(--ac)}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.big div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.big b{display:block;font-size:34px;line-height:1}.big span{font-size:12.5px;color:var(--muted)}
+.opps{list-style:none;padding:0;margin:0;display:grid;gap:4px}
+.orow{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(40px,20%) 40px auto;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 8px}
+.o-n{display:flex;flex-direction:column;min-width:0}.o-n b{font-size:14px}.o-n span{font-size:12px;color:var(--muted)}
+.bar.wl{background:color-mix(in srgb,var(--bad) 35%,transparent)}.bar.wl i{background:var(--good)}
+.lnk{border:1.5px solid var(--line);background:var(--soft);color:var(--ink);border-radius:8px;padding:5px 9px;font:600 12.5px "Barlow",sans-serif;cursor:pointer}
+.orow .glist{grid-column:1/-1}
+.glist{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px}
+.gm{display:grid;grid-template-columns:30px 1fr;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px}
+.res{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;font:800 16px "Barlow Condensed",sans-serif;color:#fff}.res.v{background:var(--good)}.res.d{background:var(--bad)}
+.mini{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.mini .tile.sm{width:34px;height:34px;border-radius:8px}.mini .t-mono{font-size:14px}.mini .t-cta.sm,.mini .t-flag{display:none}
+.form{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.form form{display:grid;gap:10px;margin-top:10px}.form label{display:grid;gap:3px;font-size:13.5px;font-weight:600}
+.form input,.form select{font:15px "Barlow",sans-serif;padding:8px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.rs{border:1.5px solid var(--line);border-radius:8px;display:flex;flex-wrap:wrap;gap:12px}.rs label{display:flex;gap:6px;align-items:center;font-weight:500}.rs input{width:auto}
+.save{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px;font:700 15px "Barlow",sans-serif;cursor:pointer}
+/* ---- abas ---- */
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+#tabs button{border:0;background:none;color:var(--muted);padding:8px 0 9px;font:600 12.5px "Barlow",sans-serif;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer}
+#tabs button span{font-size:19px;line-height:1.1}
+#tabs button.on{color:var(--ac);box-shadow:inset 0 3px 0 var(--ac)}
+@media (min-width:760px){.teamstats{grid-template-columns:repeat(6,1fr)}}
+@media (max-width:380px){.mon{grid-template-columns:104px 1fr}.tile.lg{width:104px;height:104px}.lg .t-mono{font-size:44px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top"><p class="brand">Team Atlas <small>Pokémon Champions · Reg M-C</small></p><nav id="teams" aria-label="Escolher time"></nav></header>
+<main id="view"></main>
+<nav id="tabs" aria-label="Seções">
+<button data-tab="times"><span>👥</span>Times</button>
+<button data-tab="leads"><span>🚀</span>Leads</button>
+<button data-tab="matchups"><span>⚔️</span>Matchups</button>
+<button data-tab="speed"><span>⏱️</span>Speed</button>
+<button data-tab="partidas"><span>📊</span>Partidas</button>
+</nav>
+<script>
+/* ===== DADOS DO ATLAS ===== */
+const ROLES = {
+  wc:{i:"💥",n:"Win condition"}, of:{i:"⚔️",n:"Ofensivo"}, de:{i:"🛡️",n:"Defensivo"},
+  sc:{i:"⚡",n:"Speed control"}, su:{i:"🎯",n:"Suporte"}, pv:{i:"🔄",n:"Pivô"}, co:{i:"🧱",n:"Controle de campo"}
+};
+const TYPE_COLOR = {
+  "Normal":"#9a9684","Fogo":"#e0612c","Água":"#3a7fd6","Grama":"#48a046","Elétrico":"#e0ad17","Gelo":"#4fbdcc",
+  "Lutador":"#c0392b","Venenoso":"#9446b5","Terra":"#b5854a","Voador":"#7f9be3","Psíquico":"#e04f78","Inseto":"#8aa326",
+  "Pedra":"#a08a4c","Fantasma":"#65559c","Dragão":"#5647cf","Sombrio":"#574840","Aço":"#7a8fa3","Fada":"#de86c3"
+};
+/* Espécies: nome, tipos, monograma, papel, slug do Pokémon Database, mega */
+const SP = {
+  "gallade":{n:"Gallade",t:["Psíquico","Lutador"],m:"GL",r:"wc",s:"gallade"},
+  "mega-gallade":{n:"Mega Gallade",t:["Psíquico","Lutador"],m:"GL",r:"wc",s:"gallade",mega:1},
+  "staraptor-mega":{n:"Mega Staraptor",t:["Lutador","Voador"],m:"SR",r:"sc",s:"staraptor",mega:1},
+  "mawile-mega":{n:"Mega Mawile",t:["Aço","Fada"],m:"MW",r:"of",s:"mawile",mega:1},
+  "farigiraf":{n:"Farigiraf",t:["Normal","Psíquico"],m:"FG",r:"sc",s:"farigiraf"},
+  "lycanroc-dusk":{n:"Lycanroc-Dusk",t:["Pedra"],m:"LY",r:"of",s:"lycanroc"},
+  "milotic":{n:"Milotic",t:["Água"],m:"MI",r:"de",s:"milotic"},
+  "garchomp-mega":{n:"Mega Garchomp",t:["Dragão","Terra"],m:"GC",r:"wc",s:"garchomp",mega:1},
+  "garchomp-mega-z":{n:"Garchomp-Mega-Z",t:["Dragão"],m:"GC",r:"wc",s:"garchomp",mega:1,z:1},
+  "tyranitar":{n:"Tyranitar",t:["Pedra","Sombrio"],m:"TT",r:"co",s:"tyranitar"},
+  "excadrill":{n:"Excadrill",t:["Terra","Aço"],m:"EX",r:"of",s:"excadrill"},
+  "sinistcha":{n:"Sinistcha",t:["Grama","Fantasma"],m:"SI",r:"sc",s:"sinistcha"},
+  "rotom-wash":{n:"Wash Rotom",t:["Elétrico","Água"],m:"RW",r:"pv",s:"rotom"},
+  "rotom-heat":{n:"Rotom-Heat",t:["Elétrico","Fogo"],m:"RH",r:"pv",s:"rotom"},
+  "maushold":{n:"Maushold",t:["Normal"],m:"MS",r:"su",s:"maushold"},
+  "maushold-four":{n:"Maushold-Four",t:["Normal"],m:"MS",r:"su",s:"maushold"},
+  "kingambit":{n:"Kingambit",t:["Sombrio","Aço"],m:"KB",r:"of",s:"kingambit"},
+  "empoleon":{n:"Empoleon",t:["Água","Aço"],m:"EM",r:"de",s:"empoleon"},
+  "raichu-mega-y":{n:"Mega Raichu-Y",t:["Elétrico"],m:"RY",r:"of",s:"raichu",mega:1},
+  "weavile":{n:"Weavile",t:["Sombrio","Gelo"],m:"WV",r:"of",s:"weavile"},
+  "grimmsnarl":{n:"Grimmsnarl",t:["Sombrio","Fada"],m:"GM",r:"su",s:"grimmsnarl"},
+  "rillaboom":{n:"Rillaboom",t:["Grama"],m:"RB",r:"co",s:"rillaboom"},
+  "talonflame":{n:"Talonflame",t:["Fogo","Voador"],m:"TF",r:"sc",s:"talonflame"},
+  "torterra":{n:"Torterra",t:["Grama","Terra"],m:"TO",r:"co",s:"torterra"},
+  "aegislash":{n:"Aegislash",t:["Aço","Fantasma"],m:"AE",r:"of",s:"aegislash"},
+  "sylveon":{n:"Sylveon",t:["Fada"],m:"SY",r:"of",s:"sylveon"}
+};
+/* Adversários: chave → [nome, tipos, espécie-base (agrupa no histórico)] */
+const OPP_RAW = {
+  "charizard-mega-y":["Mega Charizard-Y",["Fogo","Voador"],"Charizard"],
+  "raichu-mega-y":["Mega Raichu-Y",["Elétrico"],"Raichu"],
+  "staraptor":["Staraptor",["Normal","Voador"],"Staraptor"],
+  "staraptor-mega":["Mega Staraptor",["Lutador","Voador"],"Staraptor"],
+  "garchomp":["Garchomp",["Dragão","Terra"],"Garchomp"],
+  "garchomp-mega-z":["Garchomp-Mega-Z",["Dragão"],"Garchomp"],
+  "kingambit":["Kingambit",["Sombrio","Aço"],"Kingambit"],
+  "sneasler":["Sneasler",["Lutador","Venenoso"],"Sneasler"],
+  "basculegion":["Basculegion",["Água","Fantasma"],"Basculegion"],
+  "floette-mega":["Mega Floette",["Fada"],"Floette"],
+  "whimsicott":["Whimsicott",["Grama","Fada"],"Whimsicott"],
+  "incineroar":["Incineroar",["Fogo","Sombrio"],"Incineroar"],
+  "sinistcha":["Sinistcha",["Grama","Fantasma"],"Sinistcha"],
+  "farigiraf":["Farigiraf",["Normal","Psíquico"],"Farigiraf"],
+  "hatterene":["Hatterene",["Psíquico","Fada"],"Hatterene"],
+  "snorlax":["Snorlax",["Normal"],"Snorlax"],
+  "kommo-o":["Kommo-o",["Dragão","Lutador"],"Kommo-o"],
+  "excadrill":["Excadrill",["Terra","Aço"],"Excadrill"],
+  "tyranitar":["Tyranitar",["Pedra","Sombrio"],"Tyranitar"],
+  "tyranitar-mega":["Mega Tyranitar",["Pedra","Sombrio"],"Tyranitar"],
+  "pelipper":["Pelipper",["Água","Voador"],"Pelipper"],
+  "swampert-mega":["Mega Swampert",["Água","Terra"],"Swampert"],
+  "politoed":["Politoed",["Água"],"Politoed"],
+  "ninetales-alola":["Ninetales-Alola",["Gelo","Fada"],"Ninetales"],
+  "volcarona":["Volcarona",["Inseto","Fogo"],"Volcarona"],
+  "torkoal":["Torkoal",["Fogo"],"Torkoal"],
+  "aegislash":["Aegislash",["Aço","Fantasma"],"Aegislash"],
+  "sylveon":["Sylveon",["Fada"],"Sylveon"],
+  "dragonite-mega":["Mega Dragonite",["Dragão","Voador"],"Dragonite"],
+  "dragonite":["Dragonite",["Dragão","Voador"],"Dragonite"],
+  "salamence-mega":["Mega Salamence",["Dragão","Voador"],"Salamence"],
+  "scovillain":["Scovillain",["Grama","Fogo"],"Scovillain"],
+  "indeedee-f":["Indeedee-F",["Psíquico","Normal"],"Indeedee"],
+  "rillaboom":["Rillaboom",["Grama"],"Rillaboom"],
+  "baxcalibur-mega":["Mega Baxcalibur",["Dragão","Gelo"],"Baxcalibur"],
+  "glimmora":["Glimmora",["Pedra","Venenoso"],"Glimmora"],
+  "corviknight":["Corviknight",["Voador","Aço"],"Corviknight"],
+  "milotic":["Milotic",["Água"],"Milotic"],
+  "mawile-mega":["Mega Mawile",["Aço","Fada"],"Mawile"],
+  "scrafty-mega":["Mega Scrafty",["Sombrio","Lutador"],"Scrafty"],
+  "typhlosion":["Typhlosion",["Fogo"],"Typhlosion"],
+  "absol-mega-z":["Absol-Mega-Z",["Sombrio"],"Absol"],
+  "golisopod-mega":["Mega Golisopod",["Aço","Inseto"],"Golisopod"],
+  "froslass-mega":["Mega Froslass",["Gelo","Fantasma"],"Froslass"],
+  "froslass":["Froslass",["Gelo","Fantasma"],"Froslass"],
+  "arcanine-hisui":["Arcanine-Hisui",["Fogo","Pedra"],"Arcanine"],
+  "falinks-mega":["Mega Falinks",["Lutador"],"Falinks"],
+  "tsareena":["Tsareena",["Grama"],"Tsareena"],
+  "grimmsnarl":["Grimmsnarl",["Sombrio","Fada"],"Grimmsnarl"],
+  "delphox-mega":["Mega Delphox",["Fogo","Psíquico"],"Delphox"],
+  "metagross-mega":["Mega Metagross",["Aço","Psíquico"],"Metagross"],
+  "metagross":["Metagross",["Aço","Psíquico"],"Metagross"],
+  "morpeko":["Morpeko",["Elétrico","Sombrio"],"Morpeko"],
+  "chandelure":["Chandelure",["Fantasma","Fogo"],"Chandelure"],
+  "primarina":["Primarina",["Água","Fada"],"Primarina"],
+  "annihilape":["Annihilape",["Lutador","Fantasma"],"Annihilape"],
+  "maushold":["Maushold",["Normal"],"Maushold"],
+  "ceruledge":["Ceruledge",["Fogo","Fantasma"],"Ceruledge"],
+  "klefki":["Klefki",["Aço","Fada"],"Klefki"],
+  "altaria-mega":["Mega Altaria",["Dragão","Fada"],"Altaria"],
+  "heliolisk":["Heliolisk",["Elétrico","Normal"],"Heliolisk"],
+  "sableye":["Sableye",["Sombrio","Fantasma"],"Sableye"],
+  "dragapult":["Dragapult",["Dragão","Fantasma"],"Dragapult"],
+  "archaludon":["Archaludon",["Aço","Dragão"],"Archaludon"],
+  "talonflame":["Talonflame",["Fogo","Voador"],"Talonflame"],
+  "samurott-hisui":["Samurott-Hisui",["Água","Sombrio"],"Samurott"],
+  "appletun":["Appletun",["Grama","Dragão"],"Appletun"],
+  "luxray":["Luxray",["Elétrico"],"Luxray"],
+  "venusaur":["Venusaur",["Grama","Venenoso"],"Venusaur"],
+  "drampa-mega":["Mega Drampa",["Normal","Dragão"],"Drampa"],
+  "sceptile-mega":["Mega Sceptile",["Grama","Dragão"],"Sceptile"],
+  "rotom-wash":["Wash Rotom",["Elétrico","Água"],"Rotom"],
+  "swampert":["Swampert",["Água","Terra"],"Swampert"],
+  "banette-mega":["Mega Banette",["Fantasma"],"Banette"],
+  "skeledirge":["Skeledirge",["Fogo","Fantasma"],"Skeledirge"],
+  "zoroark-hisui":["Zoroark-Hisui",["Normal","Fantasma"],"Zoroark"],
+  "palafin":["Palafin",["Água"],"Palafin"],
+  "blastoise":["Blastoise",["Água"],"Blastoise"],
+  "blastoise-mega":["Mega Blastoise",["Água"],"Blastoise"],
+  "gengar-mega":["Mega Gengar",["Fantasma","Venenoso"],"Gengar"],
+  "aerodactyl":["Aerodactyl",["Pedra","Voador"],"Aerodactyl"],
+  "whimsicott-tw":["Whimsicott",["Grama","Fada"],"Whimsicott"]
+};
+const MONO_OVR = {Garchomp:"GC",Gallade:"GL",Grimmsnarl:"GM",Glimmora:"GI",Gengar:"GE",Staraptor:"SR",Sneasler:"SN",Sinistcha:"SI",Sylveon:"SY",Salamence:"SA",Samurott:"SM",Sableye:"SB",Scovillain:"SC",Sceptile:"SP",Scrafty:"SF",Skeledirge:"SK",Swampert:"SW",Snorlax:"SX",Kingambit:"KB","Kommo-o":"KO",Klefki:"KL",Basculegion:"BG",Baxcalibur:"BX",Banette:"BN",Blastoise:"BL",Mawile:"MW",Milotic:"MI",Maushold:"MS",Metagross:"MG",Morpeko:"MK",Charizard:"CZ",Chandelure:"CH",Ceruledge:"CE",Corviknight:"CV",Torkoal:"TK",Tyranitar:"TT",Tsareena:"TS",Typhlosion:"TY",Talonflame:"TF",Farigiraf:"FG",Floette:"FL",Froslass:"FR",Falinks:"FA",Whimsicott:"WH",Incineroar:"IN",Indeedee:"ID",Hatterene:"HT",Heliolisk:"HE",Excadrill:"EX",Pelipper:"PE",Politoed:"PO",Primarina:"PR",Palafin:"PA",Ninetales:"NT",Volcarona:"VO",Venusaur:"VE",Aegislash:"AE",Altaria:"AL",Absol:"AB",Arcanine:"AR",Annihilape:"AN",Archaludon:"AD",Appletun:"AP",Aerodactyl:"AO",Dragonite:"DN",Dragapult:"DP",Drampa:"DR",Delphox:"DX",Rillaboom:"RB",Raichu:"RY",Rotom:"RW",Golisopod:"GO",Luxray:"LX",Zoroark:"ZO"};
+function oppSpecies(k){
+  if(SP[k] && !OPP_RAW[k]) return SP[k];
+  const o = OPP_RAW[k]; if(!o) return {n:k,t:["Normal"],m:k.slice(0,2).toUpperCase(),s:k.split("-")[0],base:k};
+  const base=o[2]; return {n:o[0],t:o[1],m:MONO_OVR[base]||base.slice(0,2).toUpperCase(),s:base.toLowerCase(),base,mega:/Mega/.test(o[0])};
+}
+
+/* ===== TIMES ===== */
+const TEAMS = [
+{ id:"T1", name:"Gallade Dual-Mode", accent:"#0f8a9c",
+  plan:"Dois modos no mesmo time: Tailwind do Staraptor para correr, Trick Room da Farigiraf para inverter. O Gallade entra no meio do jogo como carry.",
+  wins:["Gallade Sacred Sword fecha Kingambit e Raichu-Y","Mawile fecha o modo TR com Play Rough/Iron Head + HH","Milotic segura o fim de jogo por atrito"],
+  roster:[
+   {k:"gallade",fn:"Carry de mid-game",ab:"Sharpness",it:"Life Orb",na:"Adamant",sp:"16 Atk/32 HP/16 Def/2 SpD",mv:["Leaf Blade","Psycho Cut","Sacred Sword","Protect"],spe:100},
+   {k:"staraptor-mega",fn:"Tailwind + Intimidate",ab:"Intimidate → Contrary (mega)",it:"Staraptite",na:"Jolly",sp:"15 HP/19 Atk/32 Spe",mv:["Close Combat","Dual Wingbeat","Tailwind","Protect"],spe:178},
+   {k:"mawile-mega",fn:"Fecha o modo TR",ab:"Intimidate → Huge Power (mega)",it:"Mawilite",na:"Adamant",sp:"19 Atk/32 HP/15 Def",mv:["Play Rough","Iron Head","Sucker Punch","Protect"],spe:85},
+   {k:"farigiraf",fn:"Trick Room + Helping Hand",ab:"Armor Tail",it:"Colbur Berry",na:"Calm",sp:"29 HP/21 Def/16 SpD",mv:["Psychic","Helping Hand","Trick Room","Protect"],spe:80},
+   {k:"lycanroc-dusk",fn:"Accelerock: OHKO em Char-Y/Delphox",ab:"Tough Claws",it:"Focus Sash",na:"Jolly",sp:"32 Atk/32 Spe",mv:["Accelerock","Close Combat","Iron Head","Protect"],spe:178},
+   {k:"milotic",fn:"Trava Fogo, atrito",ab:"Competitive",it:"Leftovers",na:"Bold",sp:"32 HP/21 SpA/10 Def/3 SpD",mv:["Scald","Ice Beam","Recover","Protect"],spe:101}],
+  rules:["Contra Raichu-Y: não trazer a Milotic como send-in (Zap Cannon 96–113,8%).","Não trazer o Staraptor com Kingambit vivo: o Intimidate ativa o Defiant.","Contra Staraptor Contrary confirmado: nosso Intimidate vira +1 Atk para ele.","Nunca liderar as duas Megas juntas.","Checar peças mais lentas que Farigiraf (80) antes de setar TR."],
+  leads:[
+   {a:"farigiraf",b:"mawile-mega",tags:["rec"],when:"HO rápida, Tailwind adversário, chuva.",plan:"TR no turno 1; a Mawile age primeiro (85) e fecha com Play Rough/Iron Head + HH."},
+   {a:"farigiraf",b:"staraptor-mega",tags:["rec"],when:"Duplo controle (TW + TR deles).",plan:"TR por cima do TW deles; o Staraptor age a 178 antes do TR valer e dá Close Combat grátis."},
+   {a:"staraptor-mega",b:"lycanroc-dusk",tags:["fast"],when:"Ofensiva genérica, Charizard-Y, Garchomp, times sem TR.",plan:"Intimidate/TW no turno 1; Accelerock ameaça OHKO imediato. Nunca testado como abertura."},
+   {a:"staraptor-mega",b:"gallade",tags:["fast"],when:"Areia ou TR duro deles.",plan:"Pressão máxima antes do TR: Gallade OHKO em Snorlax, Kingambit, Incineroar."},
+   {a:"staraptor-mega",b:"milotic",tags:["gen"],when:"Raichu-Y/Staraptor, sol.",plan:"Intimidate + TW; a Milotic come Intimidate e trava Fogo."},
+   {a:"mawile-mega",b:"staraptor-mega",tags:["sit"],when:"Kommo-o no preview.",plan:"TW e Play Rough no counter-build."},
+   {a:"milotic",b:"farigiraf",tags:["sit"],when:"Scovillain ou queimador anti-físico.",plan:"Gallade no banco; atrito com especiais."}],
+  matchups:[
+   {vs:"Raichu-Y / Staraptor",opp:["raichu-mega-y","staraptor-mega","kingambit"],lead:["staraptor-mega","milotic"],four:["staraptor-mega","milotic","farigiraf","gallade"],diff:"eq",
+    threats:[{p:"raichu-mega-y",w:"Zap Cannon faz 96–113,8% na Milotic (75% de OHKO)."},{p:"kingambit",w:"Kowtow na Farigiraf; Defiant se tomar Intimidate."}],
+    answers:[{p:"gallade",w:"Sacred Sword → Raichu-Y 140,1–165,9%, OHKO."},{p:"mawile-mega",w:"Aguenta Zap Cannon (80,2–94,2%)."}],rule:"Farigiraf longe de Kingambit vivo."},
+   {vs:"Duplo controle (TW + TR)",opp:["whimsicott","farigiraf","sinistcha"],lead:["farigiraf","staraptor-mega"],four:["farigiraf","mawile-mega","staraptor-mega","gallade"],diff:"eq",
+    threats:[{p:"whimsicott",w:"Tailwind de Prankster sobe no turno 1 e não é bloqueável."}],
+    answers:[{p:"farigiraf",w:"TR por cima do TW deles."},{p:"mawile-mega",w:"Play Rough + HH mata setter Farigiraf (110,2–130,2%)."}],rule:"Não perseguir o TW de Prankster; inverter o modo."},
+   {vs:"Sol",opp:["charizard-mega-y","torkoal","aegislash"],lead:["staraptor-mega","milotic"],four:["milotic","staraptor-mega","mawile-mega","farigiraf"],diff:"fav",
+    threats:[{p:"charizard-mega-y",w:"Weather Ball e Solar Beam instantâneo."},{p:"aegislash",w:"Poltergeist pune item caro."}],
+    answers:[{p:"lycanroc-dusk",w:"Accelerock → Char-Y 133,3–159,5%, OHKO antes dele agir."},{p:"milotic",w:"Trava Fogo e come Intimidate."}],rule:"Checar Grama/Aegislash antes de confiar na Milotic."},
+   {vs:"Areia",opp:["tyranitar","excadrill","garchomp"],lead:["staraptor-mega","gallade"],four:["gallade","milotic","staraptor-mega","farigiraf"],diff:"eq",
+    threats:[{p:"excadrill",w:"242 na areia: passa até o Gallade sob TW (200)."}],
+    answers:[{p:"gallade",w:"Sacred Sword no Excadrill."},{p:"milotic",w:"Ice Beam → Garchomp 80–94,8%."}],rule:"Lycanroc não ajuda aqui (Pedra resistida)."},
+   {vs:"Chuva (Swampert / Pelipper)",opp:["swampert-mega","pelipper","archaludon"],lead:["farigiraf","mawile-mega"],four:["gallade","staraptor-mega","farigiraf","mawile-mega"],diff:"des",
+    threats:[{p:"swampert-mega",w:"Fechador físico com Swift Swim (a skill não simula)."}],
+    answers:[{p:"gallade",w:"Leaf Blade OHKO no Swampert-Mega."},{p:"gallade",w:"Sacred Sword → Archaludon 108,1–127,9%."}],rule:"Usar TR ou Intimidate antes de arriscar o Gallade. Perdida 0-2 em partida real."},
+   {vs:"TR duro",opp:["hatterene","snorlax","kingambit"],lead:["staraptor-mega","gallade"],four:["staraptor-mega","gallade","farigiraf","milotic"],diff:"eq",
+    threats:[{p:"hatterene",w:"Setter de TR com Magic Bounce."}],
+    answers:[{p:"mawile-mega",w:"Iron Head → Hatterene 124,3–147,5%, OHKO."},{p:"staraptor-mega",w:"Close Combat → Snorlax antes do TR."}],rule:"Pressão máxima antes do TR subir."},
+   {vs:"Sinistcha (setter de TR)",opp:["sinistcha"],lead:["farigiraf","mawile-mega"],four:["farigiraf","mawile-mega","milotic","staraptor-mega"],diff:"des",
+    threats:[{p:"sinistcha",w:"Com Def investida, nada a fecha em 1 golpe."}],
+    answers:[{p:"mawile-mega",w:"Play Rough + HH: OHKO só se ela não investiu em Def."},{p:"milotic",w:"Ice Beam + Play Rough: morte garantida em 2 slots."}],rule:"Plano padrão: 2 slots."},
+   {vs:"Kommo-o",opp:["kommo-o"],lead:["mawile-mega","staraptor-mega"],four:["mawile-mega","gallade","staraptor-mega","milotic"],diff:"fav",
+    threats:[{p:"kommo-o",w:"Clanging Scales e counter-build."}],answers:[{p:"mawile-mega",w:"Play Rough 242%+ no counter-build."}],rule:"Tailwind."},
+   {vs:"Neve + Tailwind",opp:["ninetales-alola","whimsicott","volcarona"],lead:["milotic","mawile-mega"],four:["milotic","mawile-mega","gallade","lycanroc-dusk"],diff:"des",
+    threats:[{p:"volcarona",w:"Bug Buzz faz OHKO no Gallade liderando."},{p:"ninetales-alola",w:"Farigiraf sem TR é presa de Gelo em área."}],
+    answers:[{p:"lycanroc-dusk",w:"Send-in com Sash, neutro a Fada e Gelo (não testado)."}],rule:"Evitar liderar a Farigiraf pura."},
+   {vs:"Dragonite-Mega",opp:["dragonite-mega"],lead:["lycanroc-dusk","milotic"],four:["lycanroc-dusk","milotic","mawile-mega","farigiraf"],diff:"eq",
+    threats:[{p:"dragonite-mega",w:"Multiscale segura qualquer golpe único em HP cheio."}],
+    answers:[{p:"lycanroc-dusk",w:"Accelerock quebra a Multiscale (prioridade)."},{p:"milotic",w:"Ice Beam depois (39–47% com Multiscale)."}],rule:"Números com spreads antigos; recálculo pendente."}]
+},
+{ id:"T2", name:"Mega Garchomp Areia", accent:"#b06a12",
+  plan:"A areia do Tyranitar liga o Sand Force do Garchomp e o Sand Rush do Excadrill. A Sinistcha inverte o modo com Trick Room quando o adversário corre mais.",
+  wins:["Mega Garchomp na areia (Earth Power/Power Gem/Draco)","Tyranitar com Dragon Dance: +1 Rock Slide OHKO em Char-Y","Atrito com Will-O-Wisp + Protect"],
+  roster:[
+   {k:"garchomp-mega",fn:"Âncora ofensiva na areia",ab:"Sand Veil → Sand Force (mega)",it:"Garchompite",na:"Modest",sp:"32 SpA/26 Spe/8 HP",mv:["Earth Power","Power Gem","Draco Meteor","Protect"],spe:138},
+   {k:"tyranitar",fn:"Liga a areia, Dragon Dance",ab:"Sand Stream",it:"Chople Berry",na:"Adamant",sp:"32 HP/24 Atk/10 Def",mv:["Rock Slide","Low Kick","Dragon Dance","Protect"],spe:81},
+   {k:"excadrill",fn:"Modo rápido na areia",ab:"Sand Rush",it:"Focus Sash",na:"Jolly",sp:"32 Atk/32 HP/2 Spe",mv:["High Horsepower","Iron Head","Rock Slide","Protect"],spe:121},
+   {k:"sinistcha",fn:"Inverte o modo (TR), Rage Powder",ab:"Hospitality",it:"Kasib Berry",na:"Bold",sp:"32 HP/32 Def/2 SpD",mv:["Matcha Gotcha","Trick Room","Rage Powder","Protect"],spe:90},
+   {k:"rotom-wash",fn:"Will-O-Wisp + Volt Switch",ab:"Levitate",it:"Sitrus Berry",na:"Modest",sp:"32 HP/30 SpA/4 Spe",mv:["Hydro Pump","Volt Switch","Will-O-Wisp","Protect"],spe:110},
+   {k:"milotic",fn:"Resposta a Kommo-o e Garchomp",ab:"Competitive",it:"Leftovers",na:"Bold",sp:"32 HP/24 SpA/10 Def",mv:["Scald","Ice Beam","Recover","Protect"],spe:101}],
+  rules:["Lead Excadrill + TTar só contra times sem controle de velocidade.","Garchomp e TTar nunca juntos contra Sylveon + Farigiraf vivos.","Sol instantâneo (Char-Y + Solar Beam) faz OHKO no TTar no turno 1.","Excadrill cai para Close Combat assim que perde o HP cheio."],
+  leads:[
+   {a:"tyranitar",b:"rotom-wash",tags:["rec","gen"],when:"Padrão: ofensiva genérica, Raichu-Y/Staraptor, sol, chuva.",plan:"Areia no turno 1; Will-O-Wisp nos físicos; Garchomp entra depois."},
+   {a:"tyranitar",b:"sinistcha",tags:["sit"],when:"Trick Room duro confirmado (o playbook também usa contra Tailwind).",plan:"Setar o nosso TR antes do deles; Magic Bounce não reflete TR."},
+   {a:"tyranitar",b:"milotic",tags:["sit"],when:"Kommo-o; chuva com Basculegion.",plan:"A Milotic causa o dano (Ice Beam 2× no Kommo-o); Sinistcha entra como send-in seguro."},
+   {a:"excadrill",b:"tyranitar",tags:["fast"],when:"Só contra times sem nenhum controle de velocidade.",plan:"Sand Rush 242 corre antes de tudo. Falhou 3 de 3 fora desse critério."},
+   {a:"garchomp-mega",b:"milotic",tags:["sit"],when:"Areia espelhada.",plan:"Speed tie 81 × 81 na areia; Ice Beam OHKO no Garchomp deles."}],
+  matchups:[
+   {vs:"Raichu-Y / Staraptor",opp:["raichu-mega-y","staraptor-mega","sylveon"],lead:["tyranitar","rotom-wash"],four:["garchomp-mega","tyranitar","milotic","rotom-wash"],diff:"eq",
+    threats:[{p:"sylveon",w:"Hyper Voice em área com Farigiraf de apoio."}],answers:[{p:"garchomp-mega",w:"Pressão na areia depois do TW deles acabar."}],rule:"Garchomp + TTar nunca juntos contra Sylveon + Farigiraf."},
+   {vs:"Sol",opp:["charizard-mega-y","venusaur","torkoal"],lead:["tyranitar","rotom-wash"],four:["garchomp-mega","tyranitar","rotom-wash","milotic"],diff:"fav",
+    threats:[{p:"charizard-mega-y",w:"Sol instantâneo: Solar Beam sem carga faz OHKO no TTar."}],
+    answers:[{p:"tyranitar",w:"A areia sobrescreve o sol."},{p:"garchomp-mega",w:"Power Gem OHKO no Char-Y."}],rule:"Perdida 1-2 contra sol + Sinistcha espelhada."},
+   {vs:"Chuva",opp:["pelipper","basculegion","swampert-mega"],lead:["tyranitar","rotom-wash"],four:["garchomp-mega","tyranitar","milotic","rotom-wash"],diff:"eq",
+    threats:[{p:"basculegion",w:"OHKO no TTar."}],answers:[{p:"tyranitar",w:"A areia sobrescreve a chuva."}],rule:""},
+   {vs:"TR duro",opp:["hatterene","farigiraf","snorlax"],lead:["tyranitar","sinistcha"],four:["tyranitar","sinistcha","garchomp-mega","milotic"],diff:"eq",
+    threats:[{p:"farigiraf",w:"TR + Intimidate de Staraptor Scarf (perdida 0-2)."}],answers:[{p:"sinistcha",w:"Seta o nosso TR primeiro."},{p:"rotom-wash",w:"Will-O-Wisp como segunda via."}],rule:""},
+   {vs:"Kommo-o",opp:["kommo-o"],lead:["tyranitar","milotic"],four:["tyranitar","sinistcha","milotic","rotom-wash"],diff:"des",
+    threats:[{p:"kommo-o",w:"Maior buraco do time; nada fecha sozinho."}],answers:[{p:"milotic",w:"Ice Beam (2× no Kommo-o) é o dano."},{p:"sinistcha",w:"Imune a Close Combat; 42,6–51,1% de Clanging Scales."}],rule:"Não dar o alvo: Garchomp fora."},
+   {vs:"Areia espelhada",opp:["tyranitar","excadrill","garchomp"],lead:["garchomp-mega","milotic"],four:["garchomp-mega","tyranitar","milotic","excadrill"],diff:"eq",
+    threats:[{p:"excadrill",w:"Sand Rush do lado deles também."}],answers:[{p:"milotic",w:"Ice Beam OHKO no Garchomp deles."}],rule:"Speed tie 81 × 81."},
+   {vs:"Falinks",opp:["falinks-mega"],lead:["tyranitar","rotom-wash"],four:["garchomp-mega","tyranitar","milotic","rotom-wash"],diff:"fav",
+    threats:[{p:"falinks-mega",w:"No Retreat."}],answers:[{p:"garchomp-mega",w:"138 > 134: mata antes do No Retreat."}],rule:""}]
+},
+{ id:"T3", name:"Mega Gallade TR", accent:"#6c3fc4",
+  plan:"O Maushold empilha Ataque no Gallade com Beat Up (Justified antes de mega evoluir). A Farigiraf dá Trick Room como segundo modo.",
+  wins:["Combo Maushold → Beat Up → Mega Gallade","Kingambit + Empoleon contra Fada","Milotic no atrito"],
+  roster:[
+   {k:"mega-gallade",fn:"Finalizador do combo",ab:"Justified → Inner Focus (mega)",it:"Galladite",na:"Jolly",sp:"12 Atk/22 HP/16 Def/16 Spe",mv:["Drain Punch","Rock Slide","Shadow Sneak","Protect"],spe:160},
+   {k:"maushold",fn:"Motor Beat Up + Follow Me",ab:"Friend Guard",it:"Focus Sash",na:"Bold",sp:"32 HP/12 Def/14 SpD/8 Spe",mv:["Beat Up","Follow Me","Super Fang","Protect"],spe:139},
+   {k:"kingambit",fn:"Resposta a Fada e prioridade",ab:"Supreme Overlord",it:"Black Glasses",na:"Adamant",sp:"32 Atk/32 HP/2 Def",mv:["Kowtow Cleave","Sucker Punch","Iron Head","Protect"],spe:70},
+   {k:"farigiraf",fn:"Trick Room + Helping Hand",ab:"Armor Tail",it:"Colbur Berry",na:"Calm",sp:"29 HP/21 Def/16 SpD",mv:["Trick Room","Helping Hand","Psychic","Protect"],spe:80},
+   {k:"milotic",fn:"Atrito, resposta a Kommo-o",ab:"Competitive",it:"Leftovers",na:"Bold",sp:"32 HP/24 SpA/10 Def",mv:["Scald","Ice Beam","Recover","Protect"],spe:101},
+   {k:"empoleon",fn:"Muralha contra Fogo/Fada",ab:"Competitive",it:"Sitrus Berry",na:"Bold",sp:"32 HP/18 Def/16 SpD",mv:["Hydro Pump","Flash Cannon","Ice Beam","Protect"],spe:80}],
+  rules:["O piso real do combo é +2 Atk (2 hits), não +1.","Não expor o Empoleon a Sneasler com HP cheio: Close Combat Adamant é OHKO garantido.","Contra Fake Out confirmado: Protect no Gallade no turno 1 ou Farigiraf primeiro.","Zero partidas reais: tudo é cálculo."],
+  leads:[
+   {a:"maushold",b:"mega-gallade",tags:["rec"],when:"Preview sem Fake Out e sem Fada/Voador/Fantasma pesado.",plan:"Beat Up no Gallade e mega evolução no mesmo turno."},
+   {a:"maushold",b:"farigiraf",tags:["sit"],when:"Fake Out mirando a dupla, ou TR duro deles.",plan:"Farigiraf assume o turno 1 (Armor Tail ou TR) enquanto o Maushold prepara o boost."},
+   {a:"kingambit",b:"empoleon",tags:["sit"],when:"Big Six / Fada pesada, Gallade ainda sem boost.",plan:"Dupla resposta a Fada sem depender do combo."},
+   {a:"farigiraf",b:"empoleon",tags:["sit"],when:"TR duro confirmado.",plan:"Farigiraf inverte o modo; Empoleon aproveita a ordem lenta."},
+   {a:"milotic",b:"farigiraf",tags:["gen"],when:"Kommo-o, chuva.",plan:"Atrito clássico com TR disponível."}],
+  matchups:[],
+  noMatrix:"O T3 ainda não tem matriz de seleção (05 §27a). Use os leads por situação."
+},
+{ id:"T4", name:"Beat Up + Screens", accent:"#0d7fa0",
+  plan:"Grimmsnarl arma telas e usa Parting Shot para trazer o Gallade no mesmo turno em que o Maushold completa o Beat Up. Sem Trick Room e sem Tailwind.",
+  wins:["Combo Maushold → Gallade (Beat Up ou Parting Shot)","Parting Shot no Empoleon: +1 SpA via Competitive","Weavile e Raichu-Y compram tempo com Fake Out"],
+  roster:[
+   {k:"maushold",fn:"Motor Beat Up",ab:"Friend Guard",it:"Focus Sash",na:"Bold",sp:"32 HP/20 Def/6 SpD/8 Spe",mv:["Beat Up","Follow Me","Super Fang","Protect"],spe:139},
+   {k:"raichu-mega-y",fn:"Fake Out + pressão",ab:"Lightning Rod",it:"Raichunite Y",na:"Timid",sp:"32 HP/2 SpA/32 Spe",mv:["Focus Blast","Zap Cannon","Feint","Fake Out"],spe:200},
+   {k:"mega-gallade",fn:"Âncora do combo",ab:"Justified → Inner Focus (mega)",it:"Galladite",na:"Jolly",sp:"12 Atk/22 HP/16 Def/16 Spe",mv:["Drain Punch","Rock Slide","Shadow Sneak","Protect"],spe:160},
+   {k:"weavile",fn:"Fake Out + pressão física",ab:"Pressure",it:"Wide Lens",na:"Jolly",sp:"32 Atk/32 Spe/2",mv:["Triple Axel","Knock Off","Fake Out","Low Kick"],spe:194},
+   {k:"empoleon",fn:"Muralha Fogo/Fada; cedo é crítico",ab:"Competitive",it:"Leftovers",na:"Bold",sp:"32 HP/18 Def/16 SpD",mv:["Hydro Pump","Flash Cannon","Ice Beam","Protect"],spe:80},
+   {k:"grimmsnarl",fn:"Telas + Parting Shot",ab:"Prankster",it:"Light Clay",na:"Careful",sp:"32 HP/19 Def/15 SpD",mv:["Spirit Break","Light Screen","Reflect","Parting Shot"],spe:80}],
+  rules:["Fada revelada no preview: Empoleon entra cedo, sempre.","Parting Shot falha contra alvo Sombrio: trocar manualmente.","Foul Play usa o Ataque boostado do Gallade: não deixar parado depois do boost.","Grimmsnarl toma 2× de Fada.","Psychic Terrain bloqueia o Parting Shot de Prankster."],
+  leads:[
+   {a:"maushold",b:"mega-gallade",tags:["rec"],when:"Nenhuma resposta ao Gallade no preview.",plan:"Beat Up e mega evolução no mesmo turno."},
+   {a:"weavile",b:"maushold",tags:["gen"],when:"Preview sem sinal claro.",plan:"Fake Out compra o turno do Beat Up; Weavile pressiona."},
+   {a:"weavile",b:"raichu-mega-y",tags:["fast"],when:"2+ respostas ao Gallade, ou Mega Staraptor confirmado.",plan:"Fake Out duplo compra tempo."},
+   {a:"maushold",b:"grimmsnarl",tags:["sit"],when:"Uma resposta relevante ao Gallade.",plan:"Telas no turno 1; Parting Shot traz o Gallade protegido no turno 2."}],
+  matchups:[
+   {vs:"Big Six / Fada-Aço",opp:["floette-mega","kingambit","whimsicott","garchomp"],lead:["maushold","mega-gallade"],four:["mega-gallade","weavile","empoleon","maushold"],diff:"eq",
+    threats:[{p:"floette-mega",w:"Fada contra Gallade e Grimmsnarl."}],answers:[{p:"empoleon",w:"Flash Cannon (+1 via Parting Shot) 53–63%, 2HKO."}],rule:"Empoleon cedo: 2-0 quando entrou cedo, 0-2 quando ficou de fora."},
+   {vs:"Sneasler / físico Luta",opp:["sneasler"],lead:["grimmsnarl","maushold"],four:["empoleon","grimmsnarl","weavile","maushold"],diff:"des",
+    threats:[{p:"sneasler",w:"CC: OHKO no Maushold; 103,6–122,5% no Empoleon."}],answers:[{p:"grimmsnarl",w:"Resiste Luta (60,9–71,8%); Parting Shot troca."}],rule:"Nunca expor Maushold ou Empoleon ao Sneasler sem suporte."},
+   {vs:"Fogo pesado",opp:["incineroar","charizard-mega-y"],lead:["maushold","grimmsnarl"],four:["empoleon","grimmsnarl","raichu-mega-y","maushold"],diff:"eq",
+    threats:[{p:"incineroar",w:"Flare Blitz OHKO no Weavile."}],answers:[{p:"empoleon",w:"Fogo neutro nele: 2HKO do Incineroar."}],rule:"Weavile fora contra Fogo pesado."},
+   {vs:"TR duro (Hatterene)",opp:["hatterene"],lead:["weavile","raichu-mega-y"],four:["weavile","raichu-mega-y","grimmsnarl","maushold"],diff:"des",
+    threats:[{p:"hatterene",w:"Pior matchup: o time não tem TR nem TW."}],answers:[{p:"weavile",w:"Matar o setter antes do TR subir."}],rule:"Mega Gallade no banco."},
+   {vs:"Kommo-o / Garchomp",opp:["kommo-o","garchomp"],lead:["weavile","maushold"],four:["weavile","empoleon","mega-gallade","maushold"],diff:"des",
+    threats:[{p:"kommo-o",w:"Sem a Milotic, nada fecha."}],answers:[{p:"weavile",w:"Triple Axel (2× em Dragão), não fecha sozinho."},{p:"empoleon",w:"Ice Beam +1 → Garchomp 137,7–163,9%."}],rule:""}]
+},
+{ id:"T5", name:"Gallade + Rillaboom + Garchomp-Z", accent:"#c7336a",
+  plan:"Mesmo motor do T4 (Beat Up + telas), trocando Raichu-Y e Weavile por Rillaboom (Grassy Terrain) e Garchomp-Mega-Z (atacante especial a 197).",
+  wins:["Combo Maushold → Gallade","Empoleon + Parting Shot","Garchomp-Z como atacante rápido (não confirmado em partida)"],
+  roster:[
+   {k:"maushold-four",fn:"Motor Beat Up + Follow Me",ab:"Friend Guard",it:"Chople Berry",na:"Bold",sp:"32 HP/20 Def/10 SpD/4 Spe",mv:["Super Fang","Follow Me","Beat Up","Taunt"],spe:135},
+   {k:"rillaboom",fn:"Grassy Terrain + Fake Out",ab:"Grassy Surge",it:"Miracle Seed",na:"Adamant",sp:"17 HP/32 Atk/2 SpD/15 Spe",mv:["Fake Out","Knock Off","Grassy Glide","Wood Hammer"],spe:120},
+   {k:"mega-gallade",fn:"Finalizador do combo",ab:"Justified → Inner Focus (mega)",it:"Galladite",na:"Jolly",sp:"22 HP/12 Atk/16 Def/16 Spe",mv:["Drain Punch","Rock Slide","Shadow Sneak","Protect"],spe:160},
+   {k:"grimmsnarl",fn:"Telas + Parting Shot",ab:"Prankster",it:"Light Clay",na:"Calm",sp:"32 HP/19 Def/15 SpD",mv:["Spirit Break","Light Screen","Reflect","Parting Shot"],spe:80},
+   {k:"empoleon",fn:"Muralha Fogo/Fada",ab:"Competitive",it:"Leftovers",na:"Bold",sp:"32 HP/18 Def/16 SpD",mv:["Hydro Pump","Flash Cannon","Ice Beam","Protect"],spe:80},
+   {k:"garchomp-mega-z",fn:"Atacante especial a 197",ab:"Sand Veil → Levitate (mega)",it:"Garchompite Z",na:"Modest",sp:"8 HP/32 SpA/26 Spe",mv:["Draco Meteor","Power Gem","Earth Power","Protect"],spe:197}],
+  rules:["Três peças 2× fracas a Fada (Gallade, Grimmsnarl, Garchomp-Z).","Rillaboom: passar Grassy Surge explicitamente na skill.","Garchomp-Z: calcular pela espécie e omitir o item.","Amostra: 1V-10D nos primeiros dias da M-C."],
+  leads:[
+   {a:"maushold-four",b:"mega-gallade",tags:["rec"],when:"Sem Fada bulky, Fantasma rápido ou Fake Out forte contra a dupla.",plan:"Beat Up e mega evolução no mesmo turno."},
+   {a:"rillaboom",b:"maushold-four",tags:["gen"],when:"Sem sinal claro de resposta ao Gallade.",plan:"Fake Out + terreno antes de comprometer o combo."},
+   {a:"garchomp-mega-z",b:"rillaboom",tags:["fast"],when:"Setter especial rápido rival, ou combo físico vetado.",plan:"Pressão especial a 197 enquanto o terreno sobe. Nunca jogado."},
+   {a:"grimmsnarl",b:"empoleon",tags:["sit"],when:"Uma resposta relevante ao Gallade.",plan:"Telas, depois Parting Shot no Empoleon (+1 SpA)."}],
+  matchups:[
+   {vs:"Big Six / Fada-Aço",opp:["floette-mega","kingambit","whimsicott"],lead:["grimmsnarl","empoleon"],four:["empoleon","grimmsnarl","maushold-four","mega-gallade"],diff:"des",
+    threats:[{p:"floette-mega",w:"Três peças nossas 2× fracas a Fada."}],answers:[{p:"empoleon",w:"Flash Cannon boostado (não testado neste roster)."}],rule:"Hipótese: matchup estruturalmente perdido contra Mega Floette."},
+   {vs:"Sneasler / físico Luta",opp:["sneasler"],lead:["rillaboom","maushold-four"],four:["empoleon","grimmsnarl","rillaboom","maushold-four"],diff:"des",
+    threats:[{p:"sneasler",w:"CC em Maushold e Empoleon."}],answers:[{p:"grimmsnarl",w:"Única entrada segura por tipo."}],rule:""},
+   {vs:"Fogo pesado",opp:["incineroar","charizard-mega-y"],lead:["grimmsnarl","empoleon"],four:["empoleon","grimmsnarl","garchomp-mega-z","maushold-four"],diff:"eq",
+    threats:[{p:"incineroar",w:"Rillaboom 2× fraco a Fogo."}],answers:[{p:"empoleon",w:"2HKO do Incineroar."}],rule:"Rillaboom fora."},
+   {vs:"Kommo-o / Garchomp",opp:["kommo-o","garchomp"],lead:["garchomp-mega-z","rillaboom"],four:["garchomp-mega-z","rillaboom","mega-gallade","empoleon"],diff:"eq",
+    threats:[{p:"kommo-o",w:"Sem cálculo para este roster."}],answers:[{p:"garchomp-mega-z",w:"Draco Meteor (2× em Dragão)."},{p:"empoleon",w:"Ice Beam (2× no Kommo-o, 4× no Garchomp)."}],rule:"Hipótese sem cálculo."},
+   {vs:"TR duro",opp:["hatterene","indeedee-f"],lead:["rillaboom","garchomp-mega-z"],four:["rillaboom","garchomp-mega-z","grimmsnarl","maushold-four"],diff:"des",
+    threats:[{p:"indeedee-f",w:"Psychic Terrain bloqueia Fake Out e Parting Shot."}],answers:[{p:"garchomp-mega-z",w:"Age antes do TR subir."}],rule:"Mega Gallade no banco."}]
+},
+{ id:"T6", name:"Garchomp Z / Tailwind", accent:"#1f63b8",
+  plan:"Garchomp-Z (205) e Talonflame (195) correm sozinhos; o Tailwind do Talonflame leva as peças lentas para a janela rápida.",
+  wins:["Garchomp-Z Draco Meteor antes de quase todo o meta","Talonflame Acrobatics sem item (110 de poder) com prioridade em HP cheio","Wide Guard do Torterra contra golpes de área"],
+  roster:[
+   {k:"garchomp-mega-z",fn:"Atacante especial a 205",ab:"Rough Skin → Levitate (mega)",it:"Garchompite Z",na:"Timid",sp:"18 HP/32 SpA/16 Spe",mv:["Draco Meteor","Flamethrower","Power Gem","Protect"],spe:205},
+   {k:"talonflame",fn:"Tailwind + Acrobatics",ab:"Gale Wings (só com HP cheio)",it:"Nenhum (por design)",na:"Jolly",sp:"2 HP/32 Atk/32 Spe",mv:["Taunt","Tailwind","Will-O-Wisp","Acrobatics"],spe:195},
+   {k:"torterra",fn:"Wide Guard + Headlong Rush",ab:"Overgrow",it:"Life Orb",na:"Adamant",sp:"32 HP/11 Atk/15 Def/8 Spe",mv:["Wood Hammer","Headlong Rush","Earthquake","Wide Guard"],spe:84},
+   {k:"aegislash",fn:"Stance Change, King's Shield",ab:"Stance Change",it:"Scope Lens",na:"Adamant",sp:"32 HP/10 Atk/12 Def/12 SpD",mv:["Sacred Sword","Iron Head","Shadow Claw","King's Shield"],spe:80},
+   {k:"rotom-heat",fn:"Overheat + Volt Switch",ab:"Levitate",it:"Sitrus Berry",na:"Bold",sp:"32 HP/17 Def/17 SpA",mv:["Overheat","Thunderbolt","Volt Switch","Will-O-Wisp"],spe:106},
+   {k:"sylveon",fn:"Hyper Voice Pixilate em área",ab:"Pixilate",it:"Fairy Feather",na:"Modest",sp:"13 HP/22 Def/23 SpA/8 Spe",mv:["Hyper Voice","Quick Attack","Draining Kiss","Detect"],spe:88}],
+  rules:["Draco Meteor não afeta Fada: contra Floette, Power Gem ou Flamethrower.","Taunt do Talonflame contra Hatterene volta por Magic Bounce: mirar o Indeedee.","Com Aerodactyl no preview, não expor o Talonflame primeiro.","Garchomp-Z espelho: o deles corre 223, o nosso 205.","Zero partidas reais."],
+  leads:[
+   {a:"talonflame",b:"garchomp-mega-z",tags:["fast","rec"],when:"Areia, Sneasler no preview.",plan:"Acrobatics OHKO no Sneasler (110,2–131,6%) de largada."},
+   {a:"rotom-heat",b:"torterra",tags:["rec"],when:"Núcleo Kingambit (o mais comum).",plan:"Quatro respostas de 2HKO+; não expor o Talonflame ao Sucker Punch."},
+   {a:"garchomp-mega-z",b:"torterra",tags:["fast"],when:"Núcleo Basculegion.",plan:"Vencer a corrida antes de expor peça lenta; Aegislash fora."},
+   {a:"garchomp-mega-z",b:"sylveon",tags:["fast"],when:"Mega Salamence.",plan:"Draco antes dele (205 × 172)."},
+   {a:"torterra",b:"aegislash",tags:["sit"],when:"Neve + Baxcalibur.",plan:"Wide Guard bloqueia Blizzard; Aegislash segura Ice Shard."},
+   {a:"talonflame",b:"torterra",tags:["sit"],when:"TR + sol.",plan:"Taunt no Indeedee, nunca na Hatterene; Wide Guard contra Eruption."},
+   {a:"torterra",b:"rotom-heat",tags:["sit"],when:"Mega Floette.",plan:"Não depender do Draco Meteor."},
+   {a:"aegislash",b:"sylveon",tags:["sit"],when:"Chuva + duas Megas (hipótese).",plan:"Rotom-Heat responde o Golisopod-Mega (Overheat OHKO)."}],
+  matchups:[
+   {vs:"Neve + Baxcalibur",opp:["ninetales-alola","baxcalibur-mega","volcarona"],lead:["torterra","aegislash"],four:["torterra","aegislash","garchomp-mega-z","rotom-heat"],diff:"ldes",
+    threats:[{p:"baxcalibur-mega",w:"Ice Shard ameaça o Garchomp-Z independente de Speed."}],answers:[{p:"torterra",w:"Wide Guard anula Blizzard."},{p:"aegislash",w:"Resiste Gelo e segura o Ice Shard."}],rule:"Talonflame fora (2× a Gelo)."},
+   {vs:"Areia",opp:["tyranitar-mega","excadrill","sneasler"],lead:["talonflame","garchomp-mega-z"],four:["talonflame","garchomp-mega-z","torterra","rotom-heat"],diff:"lfav",
+    threats:[{p:"excadrill",w:"242 na areia."}],answers:[{p:"talonflame",w:"Acrobatics OHKO no Sneasler."}],rule:"Evitar Aegislash contra Corviknight (Mirror Armor)."},
+   {vs:"TR + sol",opp:["torkoal","hatterene","indeedee-f"],lead:["talonflame","torterra"],four:["talonflame","torterra","garchomp-mega-z","aegislash"],diff:"des",
+    threats:[{p:"hatterene",w:"Magic Bounce devolve o Taunt."}],answers:[{p:"talonflame",w:"Taunt no Indeedee."},{p:"torterra",w:"Wide Guard contra Heat Wave/Eruption."}],rule:""},
+   {vs:"Chuva + duas Megas",opp:["golisopod-mega","absol-mega-z","whimsicott","politoed"],lead:["aegislash","sylveon"],four:["aegislash","sylveon","rotom-heat","torterra"],diff:"eq",
+    threats:[{p:"whimsicott",w:"Tailwind de Prankster não é impedível."},{p:"golisopod-mega",w:"Leech Life no Torterra 92–109,9%."}],answers:[{p:"rotom-heat",w:"Overheat → Golisopod 182–215,5%, OHKO."}],rule:"Absol-Mega-Z sem cálculo."},
+   {vs:"Núcleo Kingambit",opp:["kingambit","basculegion"],lead:["rotom-heat","torterra"],four:["rotom-heat","torterra","garchomp-mega-z","aegislash"],diff:"fav",
+    threats:[{p:"kingambit",w:"Sucker Punch 2HKO no Talonflame."}],answers:[{p:"rotom-heat",w:"Overheat."},{p:"torterra",w:"Headlong Rush."}],rule:""},
+   {vs:"Núcleo Basculegion",opp:["basculegion","kingambit"],lead:["garchomp-mega-z","torterra"],four:["garchomp-mega-z","talonflame","torterra","rotom-heat"],diff:"lfav",
+    threats:[{p:"basculegion",w:"Last Respects OHKO no Aegislash mesmo resistido."}],answers:[{p:"garchomp-mega-z",w:"Vencer a corrida antes."}],rule:"Aegislash fora."},
+   {vs:"Mega Salamence",opp:["salamence-mega"],lead:["garchomp-mega-z","sylveon"],four:["garchomp-mega-z","sylveon","rotom-heat","torterra"],diff:"eq",
+    threats:[{p:"salamence-mega",w:"Com Tailwind dele, perdemos a corrida."}],answers:[{p:"garchomp-mega-z",w:"Draco OHKO agindo antes (205 × 172)."},{p:"sylveon",w:"Hyper Voice 2HKO."}],rule:"Aegislash fora."},
+   {vs:"Sneasler",opp:["sneasler"],lead:["talonflame","garchomp-mega-z"],four:["talonflame","garchomp-mega-z","torterra","rotom-heat"],diff:"lfav",
+    threats:[{p:"sneasler",w:"Dire Claw quase OHKO na Sylveon."}],answers:[{p:"talonflame",w:"Acrobatics OHKO de largada."}],rule:""},
+   {vs:"Mega Floette",opp:["floette-mega"],lead:["torterra","rotom-heat"],four:["torterra","rotom-heat","talonflame","aegislash"],diff:"des",
+    threats:[{p:"floette-mega",w:"Imune a Draco Meteor."}],answers:[{p:"aegislash",w:"Iron Head."}],rule:"Confiança baixa."}]
+}];
+
+/* ===== SPEED ===== */
+const BENCH = [
+ {n:"Sneasler (Unburden ativo)",v:344,k:"sneasler"},{n:"Excadrill na areia",v:242,k:"excadrill"},{n:"Garchomp-Mega-Z Timid máx",v:223,k:"garchomp-mega-z"},
+ {n:"Mega Aerodactyl Jolly máx",v:222,k:"aerodactyl"},{n:"Basculegion Jolly Scarf",v:214,k:"basculegion"},{n:"Mega Raichu-Y",v:200,k:"raichu-mega-y"},
+ {n:"Sneasler Jolly máx",v:189,k:"sneasler"},{n:"Whimsicott Timid máx",v:184,k:"whimsicott"},{n:"Mega Staraptor",v:178,k:"staraptor-mega"},
+ {n:"Ninetales-Alola",v:174,k:"ninetales-alola"},{n:"Mega Salamence",v:172,k:"salamence-mega"},{n:"Garchomp Jolly máx",v:169,k:"garchomp"},{n:"Charizard-Y Timid máx",v:167,k:"charizard-mega-y"},
+ {n:"Indeedee Scarf",v:161,k:"indeedee-f"},{n:"Arcanine-Hisui",v:156,k:"arcanine-hisui"},{n:"Mega Gengar",v:150,k:"gengar-mega"},
+ {n:"Kommo-o Modest máx",v:137,k:"kommo-o"},{n:"Mega Falinks",v:134,k:"falinks-mega"},{n:"Basculegion (sem Scarf)",v:110,k:"basculegion"},
+ {n:"Sinistcha",v:90,k:"sinistcha"},{n:"Sylveon",v:88,k:"sylveon"},{n:"Incineroar",v:80,k:"incineroar"},{n:"Kingambit",v:71,k:"kingambit"},{n:"Snorlax",v:45,k:"snorlax"}
+];
+
+/* ===== LISTA DE ESPÉCIES PARA O FORMULÁRIO ===== */
+const OPP_KEYS = Object.keys(OPP_RAW).filter(k=>k!=="whimsicott-tw").sort((a,b)=>OPP_RAW[a][0].localeCompare(OPP_RAW[b][0]));
+
+/* ===== MAPA PERMANENTE DE SPRITES (fonte de verdade; o Atlas não consulta a web para escolher sprites) =====
+   Fonte: github.com/PokeAPI/sprites, arte oficial. Forma confirmada pela API da PokeAPI (nome e tipos da forma)
+   e existência do arquivo confirmada em 25/set/2026. */
+const SPRITES = {
+  "gallade": {pokeapi:"gallade",id:475,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/475.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/475.png",status:"VALIDADO"},
+  "mega-gallade": {pokeapi:"gallade-mega",id:10068,form:"Mega",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10068.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10068.png",status:"VALIDADO"},
+  "staraptor-mega": {pokeapi:"staraptor-mega",id:10308,form:"Mega",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10308.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10308.png",status:"VALIDADO"},
+  "mawile-mega": {pokeapi:"mawile-mega",id:10052,form:"Mega",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10052.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10052.png",status:"VALIDADO"},
+  "farigiraf": {pokeapi:"farigiraf",id:981,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/981.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/981.png",status:"VALIDADO"},
+  "lycanroc-dusk": {pokeapi:"lycanroc-dusk",id:10152,form:"Dusk",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10152.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10152.png",status:"VALIDADO"},
+  "milotic": {pokeapi:"milotic",id:350,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/350.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/350.png",status:"VALIDADO"},
+  "garchomp-mega": {pokeapi:"garchomp-mega",id:10058,form:"Mega",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10058.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10058.png",status:"VALIDADO"},
+  "garchomp-mega-z": {pokeapi:"garchomp-mega-z",id:10309,form:"Mega Z",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10309.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10309.png",status:"VALIDADO"},
+  "tyranitar": {pokeapi:"tyranitar",id:248,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/248.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png",status:"VALIDADO"},
+  "excadrill": {pokeapi:"excadrill",id:530,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/530.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/530.png",status:"VALIDADO"},
+  "sinistcha": {pokeapi:"sinistcha",id:1013,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/1013.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1013.png",status:"VALIDADO"},
+  "rotom-wash": {pokeapi:"rotom-wash",id:10009,form:"Wash",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10009.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10009.png",status:"VALIDADO"},
+  "rotom-heat": {pokeapi:"rotom-heat",id:10008,form:"Heat",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10008.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10008.png",status:"VALIDADO"},
+  "maushold": {pokeapi:"maushold-family-of-four",id:925,form:"Family of Four",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/925.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/925.png",status:"VALIDADO"},
+  "maushold-four": {pokeapi:"maushold-family-of-four",id:925,form:"Family of Four",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/925.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/925.png",status:"VALIDADO"},
+  "kingambit": {pokeapi:"kingambit",id:983,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/983.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/983.png",status:"VALIDADO"},
+  "empoleon": {pokeapi:"empoleon",id:395,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/395.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/395.png",status:"VALIDADO"},
+  "raichu-mega-y": {pokeapi:"raichu-mega-y",id:10305,form:"Mega Y",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/10305.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10305.png",status:"VALIDADO"},
+  "weavile": {pokeapi:"weavile",id:461,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/461.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/461.png",status:"VALIDADO"},
+  "grimmsnarl": {pokeapi:"grimmsnarl",id:861,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/861.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/861.png",status:"VALIDADO"},
+  "rillaboom": {pokeapi:"rillaboom",id:812,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/812.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/812.png",status:"VALIDADO"},
+  "talonflame": {pokeapi:"talonflame",id:663,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/663.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/663.png",status:"VALIDADO"},
+  "torterra": {pokeapi:"torterra",id:389,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/389.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/389.png",status:"VALIDADO"},
+  "aegislash": {pokeapi:"aegislash-shield",id:681,form:"Shield",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/681.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/681.png",status:"VALIDADO"},
+  "sylveon": {pokeapi:"sylveon",id:700,form:"base",source:"PokeAPI/sprites",file:"sprites/pokemon/other/official-artwork/700.png",imageUrl:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png",status:"VALIDADO"}
+};
+const SPRITES_PENDENTES = []; /* Maushold do T3/T4 confirmado pelo usuário como Family of Four (25/set) */
+
+/* ===== RENDER ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ST={team:0,tab:"times",spdMode:"normal",spdScope:"team",pScope:"team",pOpen:null,games:[],db:null,dbState:"loading"};
+try{const s=JSON.parse(localStorage.getItem("atlas-ui")||"{}");if(s.team!=null)ST.team=s.team;if(s.tab)ST.tab=s.tab;}catch(e){}
+function saveUI(){try{localStorage.setItem("atlas-ui",JSON.stringify({team:ST.team,tab:ST.tab}))}catch(e){}}
+
+function spec(k){return SP[k]?Object.assign({own:1},SP[k]):oppSpecies(k)}
+function tcol(t){return TYPE_COLOR[t]||"#888"}
+/* Cartão visual (identidade fixa do Pokémon). size: lg | md | sm */
+function tile(k,size,opts={}){
+  const s=spec(k);const c1=tcol(s.t[0]),c2=tcol(s.t[1]||s.t[0]);
+  const role=(opts.role!==false && s.own && ROLES[s.r])?`<span class="t-role" title="${ROLES[s.r].n}">${ROLES[s.r].i}</span>`:"";
+  const flag=s.z?`<span class="t-flag">Z</span>`:(s.mega?`<span class="t-flag">M</span>`:"");
+  const cta=size==="sm"?`<span class="t-cta sm" aria-hidden="true">↗</span>`:`<span class="t-cta">VER SPRITE ↗</span>`;
+  return `<a class="tile ${size}" style="--c1:${c1};--c2:${c2}" href="${spriteHref(k,s)}" target="_blank" rel="noopener" aria-label="Ver sprite de ${esc(s.n)}">${flag}${role}<span class="t-mono">${esc(s.m)}</span>${cta}</a>`;
+}
+function spriteHref(k,s){const v=SPRITES[k];return v&&v.status==="VALIDADO"?v.imageUrl:"https://pokemondb.net/sprites/"+esc(s.s)}
+function typeChips(k){return spec(k).t.map(t=>`<span class="type" style="--tc:${tcol(t)}">${t}</span>`).join("")}
+function roleLine(k){const s=spec(k);if(!s.own)return"";const r=ROLES[s.r];return `<span class="role-line">${r.i} ${r.n}</span>`}
+/* Bloco compacto: cartão + nome + função */
+function pk(k,size="md",sub,o={}){const s=spec(k);return `<div class="pk ${size}">${tile(k,size,o)}<div class="pk-name">${esc(s.n)}</div>${sub!==undefined?`<div class="pk-sub">${sub}</div>`:roleLine(k)}</div>`}
+
+const TAGS={rec:["★","Recomendado"],fast:["⚡","Rápido"],gen:["◎","Genérico"],sit:["◆","Situacional"]};
+const DIFF={fav:["Favorável","g"],lfav:["Levemente favorável","g"],eq:["Equilibrado","n"],ldes:["Levemente desfavorável","r"],des:["Desfavorável","r"]};
+const credit=`<p class="credit">Sprites: <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noopener">PokeAPI/sprites</a> (arte oficial). Tocar num cartão abre o sprite numa aba nova.</p>`;
+
+function T(){return TEAMS[ST.team]}
+function renderTeamBar(){
+  $("#teams").innerHTML=TEAMS.map((t,i)=>`<button class="tchip ${i===ST.team?"on":""}" style="--ac:${t.accent}" data-team="${i}" aria-pressed="${i===ST.team}"><b>${t.id}</b><span>${esc(t.name)}</span></button>`).join("");
+  document.documentElement.style.setProperty("--ac",T().accent);
+}
+function renderLegend(){return `<details class="legend"><summary>Legenda dos símbolos</summary><div class="lg-grid">${Object.values(ROLES).map(r=>`<span>${r.i} ${r.n}</span>`).join("")}<span><b class="flagdemo">M</b> Mega</span><span><b class="flagdemo">Z</b> Mega Z</span></div><p class="muted">A cor do cartão vem dos tipos (diagonal = tipo duplo). O símbolo de função fica sempre no canto superior direito.</p></details>`}
+
+/* --- TIMES --- */
+function vTimes(){const t=T();
+ return `<section class="hero"><h1>${t.id} <span>${esc(t.name)}</span></h1><p class="plan">${esc(t.plan)}</p>
+ <div class="wins">${t.wins.map((w,i)=>`<div class="win"><b>${i===0?"💥":i===1?"②":"③"}</b>${esc(w)}</div>`).join("")}</div></section>
+ <div class="roster">${t.roster.map(r=>{const s=SP[r.k];return `<article class="mon">
+   ${tile(r.k,"lg")}
+   <h2>${esc(s.n)}</h2>
+   <div class="fn">${ROLES[s.r].i} <b>${ROLES[s.r].n}</b> · ${esc(r.fn)}</div>
+   <div class="types">${typeChips(r.k)}</div>
+   <dl class="kv"><dt>Ability</dt><dd>${esc(r.ab)}</dd><dt>Item</dt><dd>${esc(r.it)}</dd></dl>
+   <details class="more"><summary>Nature, SP, golpes e speed</summary>
+    <dl class="kv"><dt>Nature</dt><dd>${esc(r.na)}</dd><dt>SP</dt><dd>${esc(r.sp)}</dd><dt>Speed</dt><dd><b>${r.spe}</b></dd></dl>
+    <ul class="moves">${r.mv.map(m=>`<li>${esc(m)}</li>`).join("")}</ul></details>
+ </article>`}).join("")}</div>
+ <section class="rules"><h3>🚫 Regras duras</h3><ul>${t.rules.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+ ${renderLegend()}${credit}`;}
+
+/* --- LEADS --- */
+function vLeads(){const t=T();
+ const order={rec:0,fast:1,gen:2,sit:3};const L=[...t.leads].sort((a,b)=>order[a.tags[0]]-order[b.tags[0]]);
+ const filt=`<div class="seg" role="group" aria-label="Filtrar leads">${["all","rec","fast","gen","sit"].map(f=>`<button data-lf="${f}" class="${(ST.lf||"all")===f?"on":""}">${f==="all"?"Todos":TAGS[f][0]+" "+TAGS[f][1]}</button>`).join("")}</div>`;
+ const show=L.filter(l=>!ST.lf||ST.lf==="all"||l.tags.includes(ST.lf));
+ return `<h1 class="h">Leads <span>${t.id}</span></h1>${filt}
+ <div class="leads">${show.map(l=>`<article class="lead">
+   <div class="tags">${l.tags.map(g=>`<span class="tag ${g}">${TAGS[g][0]} ${TAGS[g][1]}</span>`).join("")}</div>
+   <div class="duo">${pk(l.a,"md")}<span class="plus">+</span>${pk(l.b,"md")}</div>
+   <div class="when"><b>Quando</b> ${esc(l.when)}</div>
+   <div class="arrow">↓</div>
+   <div class="gp"><b>Plano de jogo</b> ${esc(l.plan)}</div>
+ </article>`).join("")||`<p class="empty">Nenhum lead nesta categoria para o ${t.id}.</p>`}</div>${renderLegend()}${credit}`;}
+
+/* --- MATCHUPS --- */
+function vMatch(){const t=T();
+ if(!t.matchups.length)return `<h1 class="h">Matchups <span>${t.id}</span></h1><p class="empty">${esc(t.noMatrix)}</p>${credit}`;
+ return `<h1 class="h">Matchups <span>${t.id}</span></h1>
+ <div class="mlist">${t.matchups.map((m,i)=>{const d=DIFF[m.diff];return `<details class="mu" ${i===ST.muOpen?"open":""} data-mu="${i}"><summary>
+   <div class="mu-head"><div class="mu-opp">${m.opp.map(k=>tile(k,"sm",{role:false})).join("")}</div><div class="mu-t"><b>${esc(m.vs)}</b><span class="diff ${d[1]}">${d[0]}</span></div></div></summary>
+   <div class="versus"><div class="side"><div class="lab">Meu lado</div><div class="duo">${pk(m.lead[0],"md")}<span class="plus">+</span>${pk(m.lead[1],"md")}</div></div>
+   <div class="vs">VS</div>
+   <div class="side"><div class="lab">Oponente</div><div class="opprow">${m.opp.map(k=>pk(k,"md","",{role:false})).join("")}</div></div></div>
+   <div class="blk warn"><h4>⚠️ Principais ameaças</h4>${m.threats.map(x=>`<div class="row">${pk(x.p,"sm","",{role:false})}<p>${esc(x.w)}</p></div>`).join("")}</div>
+   <div class="blk ok"><h4>🛡️ Respostas</h4>${m.answers.map(x=>`<div class="row">${pk(x.p,"sm")}<p>→ ${esc(x.w)}</p></div>`).join("")}</div>
+   <div class="blk"><h4>Escolher 4</h4><div class="four">${m.four.map(k=>pk(k,"sm")).join("")}</div></div>
+   ${m.rule?`<div class="rule">📌 ${esc(m.rule)}</div>`:""}
+ </details>`}).join("")}</div>${credit}`;}
+
+/* --- SPEED --- */
+function vSpeed(){
+ const own=[];TEAMS.forEach((t,ti)=>t.roster.forEach(r=>{if(ST.spdScope==="all"||ti===ST.team)own.push({k:r.k,n:SP[r.k].n,v:r.spe,team:t.id,ac:t.accent,own:1})}));
+ const seen={};const ownU=own.filter(o=>{const id=o.k+o.v;if(seen[id]){seen[id].team+=" "+o.team;return false}seen[id]=o;return true});
+ let rows=ownU.map(o=>Object.assign({},o,{v2:ST.spdMode==="tw"?o.v*2:o.v})).concat(BENCH.map(b=>({k:b.k,n:b.n,v:b.v,v2:b.v,own:0})));
+ rows.sort((a,b)=>ST.spdMode==="tr"?a.v2-b.v2:b.v2-a.v2);
+ const max=Math.min(260,Math.max(...rows.map(r=>r.v2)));
+ return `<h1 class="h">Speed</h1>
+ <div class="seg">${[["normal","Normal"],["tw","Nosso Tailwind ×2"],["tr","Trick Room (lento age antes)"]].map(([k,l])=>`<button data-sm="${k}" class="${ST.spdMode===k?"on":""}">${l}</button>`).join("")}</div>
+ <div class="seg">${[["team","Só "+T().id],["all","Todos os times"]].map(([k,l])=>`<button data-ss="${k}" class="${ST.spdScope===k?"on":""}">${l}</button>`).join("")}</div>
+ <ol class="spd">${rows.map(r=>`<li class="${r.own?"own":"bench"}">${tile(r.k,"sm",{role:!!r.own})}<div class="sp-n"><b>${esc(r.n)}</b>${r.own?`<span class="tm" style="--ac:${r.ac}">${r.team}</span>`:`<span class="bm">referência</span>`}</div>
+   <div class="bar"><i style="width:${Math.min(100,Math.max(4,r.v2/max*100))}%"></i></div><b class="val">${r.v2}</b></li>`).join("")}</ol>
+ <p class="muted">Tailwind dobra só as nossas peças. Sob Trick Room, a ordem inverte: quem está no topo age primeiro. Checar sempre se alguma peça deles é mais lenta que Farigiraf (80) antes de setar TR.</p>${credit}`;}
+
+/* --- PARTIDAS --- */
+function base(k){return OPP_RAW[k]?OPP_RAW[k][2]:(SP[k]?SP[k].n:k)}
+function vGames(){
+ if(ST.dbState==="loading")return `<h1 class="h">Partidas</h1><p class="empty">Carregando o histórico…</p>`;
+ if(ST.dbState==="off")return `<h1 class="h">Partidas</h1><p class="empty">O histórico de partidas não está disponível nesta visualização. Abra o Atlas pelo claude.ai com sua conta para ver e registrar partidas.</p>`;
+ const all=ST.games;const tid=T().id;
+ const g=ST.pScope==="all"?all:all.filter(x=>x.time===tid);
+ const W=g.filter(x=>x.resultado==="V").length,L=g.length-W;
+ const byTeam=TEAMS.map(t=>{const a=all.filter(x=>x.time===t.id);const w=a.filter(x=>x.resultado==="V").length;return {t,n:a.length,w}});
+ const opp={};g.forEach(x=>(x.opp||[]).forEach(k=>{const b=base(k);(opp[b]=opp[b]||{k,n:0,w:0,list:[]});opp[b].n++;if(x.resultado==="V")opp[b].w++;opp[b].list.push(x)}));
+ const orows=Object.entries(opp).sort((a,b)=>b[1].n-a[1].n||a[0].localeCompare(b[0]));
+ const pct=(w,n)=>n?Math.round(w/n*100):0;
+ const gameRow=x=>`<li class="gm"><span class="res ${x.resultado==="V"?"v":"d"}">${x.resultado}</span><div><b>${esc(x.adversario)}</b> <span class="muted">${esc(x.time)} · ${esc(fmtD(x.data))}${x.jogo?` · G${x.jogo}`:""}${x.wo?" · W.O.":""}</span><div class="mini">${(x.opp||[]).map(k=>tile(k,"sm",{role:false})).join("")}</div>${x.nota?`<p class="muted">${esc(x.nota)}</p>`:""}</div></li>`;
+ return `<h1 class="h">Partidas</h1>
+ <div class="teamstats">${byTeam.map(({t,n,w})=>`<button class="ts ${t.id===tid?"on":""}" style="--ac:${t.accent}" data-team="${TEAMS.indexOf(t)}"><b>${t.id}</b><span>${n?`${w}V · ${n-w}D`:"sem jogos"}</span><i style="width:${pct(w,n)}%"></i></button>`).join("")}</div>
+ <div class="seg">${[["team","Só "+tid],["all","Todos os times"]].map(([k,l])=>`<button data-ps="${k}" class="${ST.pScope===k?"on":""}">${l}</button>`).join("")}</div>
+ <div class="big"><div><b>${W}</b><span>vitórias</span></div><div><b>${L}</b><span>derrotas</span></div><div><b>${pct(W,g.length)}%</b><span>de ${g.length} jogos</span></div></div>
+ <p class="muted">Amostra pequena é evidência, não veredito.</p>
+ <h2 class="h2">Contra cada Pokémon adversário</h2>
+ ${orows.length?`<ul class="opps">${orows.map(([b,o])=>`<li class="orow ${ST.pOpen===b?"open":""}">${tile(o.k,"sm",{role:false})}<div class="o-n"><b>${esc(b)}</b><span>${o.w}V · ${o.n-o.w}D</span></div><div class="bar wl"><i style="width:${pct(o.w,o.n)}%"></i></div><b class="val">${pct(o.w,o.n)}%</b><button class="lnk" data-po="${esc(b)}" aria-expanded="${ST.pOpen===b}">${ST.pOpen===b?"Fechar":"Jogos"}</button>
+   ${ST.pOpen===b?`<ul class="glist">${o.list.map(gameRow).join("")}</ul>`:""}</li>`).join("")}</ul>`:`<p class="empty">Nenhuma partida registrada ${ST.pScope==="all"?"":"para o "+tid}. Registre a primeira abaixo.</p>`}
+ <h2 class="h2">Últimas partidas</h2><ul class="glist">${[...g].sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.jogo||0)-(a.jogo||0)).slice(0,15).map(gameRow).join("")}</ul>
+ ${formHTML()}${credit}`;}
+function fmtD(d){if(!d)return"";const[y,m,dd]=d.split("-");return `${dd}/${m}`}
+function formHTML(){if(ST.readOnly)return"";return `<details class="form"><summary>＋ Registrar partida</summary>
+ <form id="gf" autocomplete="off"><label>Time<select name="time">${TEAMS.map(t=>`<option ${t.id===T().id?"selected":""}>${t.id}</option>`).join("")}</select></label>
+ <label>Adversário (nick)<input name="adversario" required maxlength="40"></label>
+ <label>Data<input type="date" name="data" value="${new Date().toISOString().slice(0,10)}"></label>
+ <fieldset class="rs"><legend>Resultado</legend><label><input type="radio" name="resultado" value="V" required> Vitória</label><label><input type="radio" name="resultado" value="D"> Derrota</label><label><input type="checkbox" name="wo"> W.O.</label></fieldset>
+ <label>Time adversário (até 6)<select name="opp" multiple size="6">${OPP_KEYS.map(k=>`<option value="${k}">${esc(OPP_RAW[k][0])}</option>`).join("")}</select></label>
+ <label>Nota<input name="nota" maxlength="200"></label>
+ <button class="save" type="submit">Salvar partida</button><p id="gmsg" class="muted" role="status"></p></form></details>`}
+
+/* --- ORQUESTRAÇÃO --- */
+const VIEWS={times:vTimes,leads:vLeads,matchups:vMatch,speed:vSpeed,partidas:vGames};
+function render(){renderTeamBar();$("#view").innerHTML=VIEWS[ST.tab]();document.querySelectorAll("#tabs button").forEach(b=>{b.classList.toggle("on",b.dataset.tab===ST.tab);b.setAttribute("aria-current",b.dataset.tab===ST.tab?"page":"false")});saveUI()}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.team!=null){ST.team=+b.dataset.team;ST.pOpen=null;ST.muOpen=null;render();return}
+ if(b.dataset.tab){ST.tab=b.dataset.tab;render();window.scrollTo(0,0);return}
+ if(b.dataset.lf){ST.lf=b.dataset.lf;render();return}
+ if(b.dataset.sm){ST.spdMode=b.dataset.sm;render();return}
+ if(b.dataset.ss){ST.spdScope=b.dataset.ss;render();return}
+ if(b.dataset.ps){ST.pScope=b.dataset.ps;ST.pOpen=null;render();return}
+ if(b.dataset.po!=null){ST.pOpen=ST.pOpen===b.dataset.po?null:b.dataset.po;render();return}
+});
+document.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.mu!=null&&d.open)ST.muOpen=+d.dataset.mu},true);
+document.addEventListener("submit",async e=>{if(e.target.id!=="gf")return;e.preventDefault();
+ const f=e.target,fd=new FormData(f),msg=$("#gmsg");const opp=[...f.opp.selectedOptions].map(o=>o.value).slice(0,6);
+ const doc={time:fd.get("time"),adversario:fd.get("adversario").trim(),data:fd.get("data"),resultado:fd.get("resultado"),wo:!!fd.get("wo"),opp,nota:(fd.get("nota")||"").trim(),jogo:0,origem:"atlas"};
+ if(!ST.db){msg.textContent="Histórico indisponível nesta visualização.";return}
+ msg.textContent="Salvando…";
+ try{await ST.db.collection("partidas").add(doc);msg.textContent="Partida salva.";f.reset()}
+ catch(err){msg.textContent=err&&err.code==="invalid_argument"?"Você não tem permissão para registrar partidas aqui.":"Não foi possível salvar agora. Tente de novo em instantes.";if(err&&err.code==="invalid_argument"){ST.readOnly=true}}
+});
+render();
+(async()=>{
+ let db=null;try{db=window.claude&&await window.claude.use("db")}catch(e){db=null}
+ if(!db){ST.dbState="off";if(ST.tab==="partidas")render();return}
+ ST.db=db;
+ db.collection("partidas").onSnapshot(s=>{ST.games=s.docs.map(d=>Object.assign({id:d.id},d.data()));ST.dbState="ok";const a=document.activeElement;if(ST.tab==="partidas"&&!(a&&a.closest&&a.closest("#gf")))render()},
+  err=>{ST.dbState="off";if(ST.tab==="partidas")render()});
+})();
+
+</script>
+</body>
+</html>
