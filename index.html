@@ -34,7 +34,7 @@ main{max-width:980px;margin:0 auto;padding:14px 12px 96px}
  background:linear-gradient(135deg,var(--c1) 0 50%,var(--c2) 50% 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28),0 1px 0 rgba(0,0,0,.08);overflow:hidden}
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .tile.lg{width:128px;height:128px;border-radius:18px}.tile.md{width:84px;height:84px}.tile.sm{width:46px;height:46px;border-radius:10px}
-.t-img{position:absolute;inset:6% 6% 14%;width:88%;height:80%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));pointer-events:none}
+.t-img{position:absolute;inset:6%;width:88%;height:88%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));pointer-events:none}
 .sm .t-img{inset:4%;width:92%;height:92%}
 .has-img .t-mono{display:none}
 .t-mono{font-weight:800;letter-spacing:1px;text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 12px rgba(0,0,0,.25);line-height:1}
@@ -553,8 +553,7 @@ function tile(k,size,opts={}){
   const s=spec(k);const c1=tcol(s.t[0]),c2=tcol(s.t[1]||s.t[0]);
   const role=(opts.role!==false && s.own && ROLES[s.r])?`<span class="t-role" title="${ROLES[s.r].n}">${ROLES[s.r].i}</span>`:"";
   const flag=s.z?`<span class="t-flag">Z</span>`:(s.mega?`<span class="t-flag">M</span>`:"");
-  const cta=size==="sm"?`<span class="t-cta sm" aria-hidden="true">↗</span>`:`<span class="t-cta">VER SPRITE ↗</span>`;
-  return `<a class="tile ${size}" style="--c1:${c1};--c2:${c2}" href="${spriteHref(k,s)}" target="_blank" rel="noopener" aria-label="Ver sprite de ${esc(s.n)}">${spriteImg(k,s)}${flag}${role}<span class="t-mono">${esc(s.m)}</span>${cta}</a>`;
+  return `<div class="tile ${size}" style="--c1:${c1};--c2:${c2}" role="img" aria-label="${esc(s.n)}">${spriteImg(k,s)}${flag}${role}<span class="t-mono">${esc(s.m)}</span></div>`;
 }
 /* Imagem dentro do cartão: tenta sprites/<id>.png do próprio site; se não existir, usa a arte da PokeAPI; se falhar, fica o monograma */
 function spriteImg(k,s){const v=SPRITES[k];if(!v||v.status!=="VALIDADO")return"";
@@ -567,7 +566,7 @@ function pk(k,size="md",sub,o={}){const s=spec(k);return `<div class="pk ${size}
 
 const TAGS={rec:["★","Recomendado"],fast:["⚡","Rápido"],gen:["◎","Genérico"],sit:["◆","Situacional"]};
 const DIFF={fav:["Favorável","g"],lfav:["Levemente favorável","g"],eq:["Equilibrado","n"],ldes:["Levemente desfavorável","r"],des:["Desfavorável","r"]};
-const credit=`<p class="credit">Sprites: <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noopener">PokeAPI/sprites</a> (arte oficial). Tocar num cartão abre o sprite numa aba nova.</p>`;
+const credit=`<p class="credit">Sprites: <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noopener">PokeAPI/sprites</a> (arte oficial).</p>`;
 
 function T(){return TEAMS[ST.team]}
 function renderTeamBar(){
