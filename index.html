@@ -34,6 +34,9 @@ main{max-width:980px;margin:0 auto;padding:14px 12px 96px}
  background:linear-gradient(135deg,var(--c1) 0 50%,var(--c2) 50% 100%);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28),0 1px 0 rgba(0,0,0,.08);overflow:hidden}
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .tile.lg{width:128px;height:128px;border-radius:18px}.tile.md{width:84px;height:84px}.tile.sm{width:46px;height:46px;border-radius:10px}
+.t-img{position:absolute;inset:6% 6% 14%;width:88%;height:80%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));pointer-events:none}
+.sm .t-img{inset:4%;width:92%;height:92%}
+.has-img .t-mono{display:none}
 .t-mono{font-weight:800;letter-spacing:1px;text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 12px rgba(0,0,0,.25);line-height:1}
 .lg .t-mono{font-size:54px;margin-top:-14px}.md .t-mono{font-size:34px;margin-top:-10px}.sm .t-mono{font-size:19px}
 .t-role{position:absolute;top:5px;right:5px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.92);font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
@@ -551,8 +554,11 @@ function tile(k,size,opts={}){
   const role=(opts.role!==false && s.own && ROLES[s.r])?`<span class="t-role" title="${ROLES[s.r].n}">${ROLES[s.r].i}</span>`:"";
   const flag=s.z?`<span class="t-flag">Z</span>`:(s.mega?`<span class="t-flag">M</span>`:"");
   const cta=size==="sm"?`<span class="t-cta sm" aria-hidden="true">↗</span>`:`<span class="t-cta">VER SPRITE ↗</span>`;
-  return `<a class="tile ${size}" style="--c1:${c1};--c2:${c2}" href="${spriteHref(k,s)}" target="_blank" rel="noopener" aria-label="Ver sprite de ${esc(s.n)}">${flag}${role}<span class="t-mono">${esc(s.m)}</span>${cta}</a>`;
+  return `<a class="tile ${size}" style="--c1:${c1};--c2:${c2}" href="${spriteHref(k,s)}" target="_blank" rel="noopener" aria-label="Ver sprite de ${esc(s.n)}">${spriteImg(k,s)}${flag}${role}<span class="t-mono">${esc(s.m)}</span>${cta}</a>`;
 }
+/* Imagem dentro do cartão: tenta sprites/<id>.png do próprio site; se não existir, usa a arte da PokeAPI; se falhar, fica o monograma */
+function spriteImg(k,s){const v=SPRITES[k];if(!v||v.status!=="VALIDADO")return"";
+  return `<img class="t-img" src="sprites/${v.id}.png" data-alt="${v.imageUrl}" alt="" loading="lazy" decoding="async" onload="this.parentNode.classList.add('has-img')" onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=''}else{this.remove()}">`}
 function spriteHref(k,s){const v=SPRITES[k];return v&&v.status==="VALIDADO"?v.imageUrl:"https://pokemondb.net/sprites/"+esc(s.s)}
 function typeChips(k){return spec(k).t.map(t=>`<span class="type" style="--tc:${tcol(t)}">${t}</span>`).join("")}
 function roleLine(k){const s=spec(k);if(!s.own)return"";const r=ROLES[s.r];return `<span class="role-line">${r.i} ${r.n}</span>`}
