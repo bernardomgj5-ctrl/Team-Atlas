@@ -113,6 +113,35 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi
 .blk{margin-top:12px}.blk h4{margin:0 0 6px;font-size:18px}
 .blk .row{display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
 .blk .row p{margin:0;font-size:14.5px}
+/* ---- tabela de danos (Matchups) ---- */
+:root{--dzKo:#fbe1dd;--dzCh:#fdecd9;--dz2:#f4eecd;--dzIm:#e7ecf1}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--dzKo:#3d1e1b;--dzCh:#3b2a17;--dz2:#302b15;--dzIm:#222c38}}
+:root[data-theme="dark"]{--dzKo:#3d1e1b;--dzCh:#3b2a17;--dz2:#302b15;--dzIm:#222c38}
+.dz-ctx{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 10px;font-size:13.5px}
+.dz-ctx b{font-weight:600;color:var(--muted);margin-right:2px}
+.dz-ctx .chip.on{border-color:var(--ac);color:var(--ac);box-shadow:inset 0 -2px 0 var(--ac)}
+.dz-h{font:700 13px "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:12px 0 6px}
+.dz-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.dz{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+.dz th,.dz td{border-bottom:1px solid var(--line);padding:6px 7px;text-align:left;vertical-align:top}
+.dz tr:last-child>*{border-bottom:0}
+.dz thead th{background:var(--soft);font-weight:600;font-size:12.5px;white-space:nowrap}
+.dz .tile{width:34px!important;height:34px!important;border-radius:9px}.dz .tile img{width:100%;height:100%;object-fit:contain}
+.dz thead th>div,.dz tbody th>div{display:flex;align-items:center;gap:7px}
+.dz tbody th{font-weight:600;white-space:nowrap}
+.dz tbody th small{display:block;font-weight:500;color:var(--muted);font-size:11.5px;margin-top:2px}
+.dz td span{display:block}
+.dz-m{font-size:11.5px;color:var(--muted)}
+.dz-r{font:700 15px/1.15 "Barlow Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.dz-t{font-size:11px;font-weight:600}
+.dz-s{font-size:11px;color:var(--muted)}
+.dz td.dz-ko{background:var(--dzKo)}.dz td.dz-ko .dz-t{color:var(--bad)}
+.dz td.dz-ch{background:var(--dzCh)}
+.dz td.dz-2{background:var(--dz2)}.dz td.dz-2 .dz-t{color:var(--neu)}
+.dz td.dz-im{background:var(--dzIm)}.dz td.dz-im .dz-r{font-weight:600;color:var(--muted)}
+.dz td.dz-na,.dz td.dz-no{color:var(--muted);font-size:12px;font-style:italic}
+.dz-leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);margin:8px 0 2px}
+.dz-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
 .warn h4{color:var(--bad)}.ok h4{color:var(--good)}
 .four{display:flex;gap:10px;flex-wrap:wrap}
 .rule{margin-top:12px;background:var(--soft);border-radius:8px;padding:8px 10px;font-size:14px}
@@ -863,6 +892,30 @@ function muDetail(t,sel,b){const lines={};const P=MXD.POOL;
  return {lines,thr:thr.slice(0,5),spd,notes:n,plan}}
 function muName(o){return spec(o).n.toLowerCase().replace("mega ","").split(" ")[0]}
 function muAvoid(t,sel,L,four){return (t.avoid||[]).filter(r=>!r.warn&&(r.lead?L.includes(r.k):four.includes(r.k))&&sel.filter(o=>r.keys.includes(o)).length>=(r.min||1))}
+/* ===== TABELA DE DANOS (22/out): melhor golpe de cada peça contra cada adversário selecionado e o melhor golpe deles contra cada peça, das tabelas MXD (skill pokemon-champions-calc) ===== */
+const DZ_W={Sun:"Sol",Rain:"Chuva",Sand:"Areia",Snow:"Neve"};
+function dzLabel(c){const [w,tr]=c.split("|");const a=[];if(w)a.push(DZ_W[w]||w);if(tr)a.push(tr+" Terrain");return a.length?a.join(" + "):"Sem clima nem terreno"}
+function dzBest(X,o,i){if(!X||!MXD.POOL[o]||!X[o])return undefined;const L=ENT(X[o][i]);return L&&L.length?L.reduce((a,b)=>b[2]>a[2]?b:a):null}
+function dzCell(x,o,k,def){
+ if(x===undefined)return '<td class="dz-na">sem cálculo</td>';
+ if(x===null)return '<td class="dz-no">sem golpe de dano</td>';
+ const [mv,lo,hi,p,acc]=x;const nm=MXD.MV[mv];
+ if(hi===0)return `<td class="dz-im"><span class="dz-m">${esc(nm)}</span><span class="dz-r">imune</span></td>`;
+ const cl=lo>=100?"dz-ko":hi>=100?"dz-ch":lo>=50?"dz-2":"";const ex=[];const ko=koS(lo,hi);if(ko)ex.push(ko);
+ if(p>0)ex.push("prioridade");if(acc<1)ex.push("precisão "+Math.round(acc*100)+"%");if(SPREAD.has(nm))ex.push("em área");
+ const sash=lo>=100&&(def?MYF.sash.includes(k):MXD.POOL[o].sash);
+ return `<td class="${cl}"><span class="dz-m">${esc(nm)}</span><span class="dz-r">${Math.round(lo)}–${Math.round(hi)}%</span>${ex.length?`<span class="dz-t">${esc(ex.join(" · "))}</span>`:""}${sash?`<span class="dz-s">Sash segura com HP cheio</span>`:""}</td>`}
+function muDmg(t,selAll,defI){const MX=MXD.MX[t.id];const ours=t.roster.map(r=>r.k);
+ if(!MX)return `<div class="blk"><h4>💥 Danos</h4><p class="empty">sem cálculo</p></div>`;
+ ST.dctx=ST.dctx||{};let i=ST.dctx[t.id];if(i==null||!MX.ctx[i])i=defI!=null&&MX.ctx[defI]!=null?defI:muCtx(t,ours,selAll.filter(o=>MXD.POOL[o])).i;
+ const ctxB=`<div class="dz-ctx"><b>Campo:</b>${MX.ctx.map((c,j)=>`<button class="chip ${j===i?"on":""}" data-dctx="${j}" aria-pressed="${j===i}">${esc(dzLabel(c))}</button>`).join("")}</div>`;
+ const hd=`<thead><tr><th scope="col">Adversário</th>${ours.map(k=>`<th scope="col"><div>${tile(k,"sm")}<span>${esc(spec(k).n)}</span></div></th>`).join("")}</tr></thead>`;
+ const rh=o=>`<th scope="row"><div>${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}${MXD.POOL[o]?`<small>${MXD.POOL[o].spe} Spe</small>`:""}</span></div></th>`;
+ const row=(o,def)=>MXD.POOL[o]?`<tr>${rh(o)}${ours.map(k=>dzCell(dzBest(def?MX.d[k]:MX.o[k],o,i),o,k,def)).join("")}</tr>`:`<tr>${rh(o)}<td class="dz-na" colspan="${ours.length}">sem cálculo</td></tr>`;
+ const tb=def=>`<div class="dz-wrap"><table class="dz">${hd}<tbody>${selAll.map(o=>row(o,def)).join("")}</tbody></table></div>`;
+ const leg=`<div class="dz-leg"><span><i style="background:var(--dzKo)"></i>OHKO garantido</span><span><i style="background:var(--dzCh)"></i>OHKO possível</span><span><i style="background:var(--dz2)"></i>2HKO garantido</span><span><i style="background:var(--dzIm)"></i>imune</span></div>`;
+ return `<div class="blk"><h4>💥 Danos</h4><p class="muted">Melhor golpe de cada peça do ${esc(t.id)} contra cada Pokémon selecionado, e o melhor golpe deles contra cada peça. Mega já na forma Mega. Sem Helping Hand, Intimidate, telas, boosts nem o clima do adversário (sol do Charizard-Y, chuva do Pelipper, areia da Tyranitar mudam o dano de Fogo e Água).</p>${ctxB}${leg}
+ <div class="dz-h">Nós atacando</div>${tb(false)}<div class="dz-h">Eles atacando</div>${tb(true)}</div>`}
 function vMatch(){const t=T();ST.oppSel=ST.oppSel||[];const sel=ST.oppSel.filter(o=>MXD.POOL[o]);
  const pool=Object.keys(MXD.POOL).sort((a,b)=>(MXD.POOL[b].u||0)-(MXD.POOL[a].u||0));
  const grid=`<div class="opgrid">${pool.map(o=>`<button class="opb ${sel.includes(o)?"on":""}" data-op="${o}" aria-pressed="${sel.includes(o)}">${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}</span><small>${MXD.POOL[o].lbl?MXD.POOL[o].lbl:MXD.POOL[o].u!=null?String(MXD.POOL[o].u).replace(".",",")+"%":"M-6"}</small></button>`).join("")}</div>`;
@@ -889,11 +942,11 @@ const EXTRA=["glimmora-mega", "dragonite-mega", "aerodactyl-mega", "primarina", 
    <div class="versus"><div class="side"><div class="lab">Leads</div><div class="duo">${pk(b.L[0],"md")}<span class="plus">+</span>${pk(b.L[1],"md")}</div></div><div class="vs">→</div><div class="side"><div class="lab">Banco</div><div class="duo">${pk(b.B[0],"md")}<span class="plus">+</span>${pk(b.B[1],"md")}</div></div></div>
    <div class="gp"><b>Plano</b> ${esc(D.plan)}</div><p class="muted">${esc(src)}</p>
    <div class="back"><b class="bh">O que cada um faz contra este preview</b>${[...b.L,...b.B].map(whyRow).join("")}</div>${vetB}</div>
-   ${oppB}<div class="blk warn"><h4>⚠️ Maiores ameaças aos leads</h4>${thr}</div>
+   ${oppB}${muDmg(t,selAll,b.cA.i)}<div class="blk warn"><h4>⚠️ Maiores ameaças aos leads</h4>${thr}</div>
    <div class="blk"><h4>⏱️ Speed dos ${D.spd.length} Pokémon</h4>${spdL}<p class="muted">Adversário: nature mais usada nas regionais; SP em Speed pela convenção. Prioridade ignora a ordem acima.</p></div>
    ${D.notes.length?`<div class="rule">📌 ${D.notes.map(esc).join("<br>📌 ")}</div>`:""}
    ${CH.alt.length?`<details class="legend"><summary>Outras opções</summary>${CH.alt.map(a=>`<div class="arow"><div class="four">${a.L.map(k=>tile(k,"sm")).join("")}<span class="plus sm">|</span>${a.B.map(k=>tile(k,"sm")).join("")}</div></div>`).join("")}<p class="muted">Leads à esquerda da barra, banco à direita.</p></details>`:""}</section>`}
- else res=`<p class="empty">Selecione os Pokémon do adversário para ver os 4 escolhidos, os leads, as ameaças e a Speed.</p>`;
+ else res=`<p class="empty">Selecione os Pokémon do adversário para ver os 4 escolhidos, os leads, as ameaças e a Speed.</p>`+(outP.length?muDmg(t,selAll,null):"");
  return `${head}${grid}${extraG}${presets}${src}${outP.length&&sel.length?`<div class="rule">⚠️ ${outP.length} dos ${selAll.length} fora do cálculo: ${outP.map(o=>esc(spec(o).n)).join(", ")}. A sugestão abaixo considera só os outros ${sel.length}.</div>`:""}${res}${oldMatrix(t)}${credit}`}
 
 function oldMatrix(t){if(!t.matchups.length)return "";
@@ -969,6 +1022,7 @@ document.addEventListener("click",e=>{
  if(b.dataset.lf){ST.lf=b.dataset.lf;render();return}
  if(b.dataset.op){ST.oppSel=ST.oppSel||[];const o=b.dataset.op;const i=ST.oppSel.indexOf(o);if(i>=0)ST.oppSel.splice(i,1);else if(ST.oppSel.length<6)ST.oppSel.push(o);render();return}
  if(b.dataset.clear){ST.oppSel=[];render();return}
+ if(b.dataset.dctx!=null){ST.dctx=ST.dctx||{};ST.dctx[T().id]=+b.dataset.dctx;render();return}
  if(b.dataset.core!=null){ST.oppSel=CORES[+b.dataset.core].k.slice();render();const d=document.querySelector('.mudet');if(d&&d.scrollIntoView)d.scrollIntoView({behavior:'smooth',block:'start'});return}
  if(b.dataset.sm){ST.spdMode=b.dataset.sm;render();return}
  if(b.dataset.ss){ST.spdScope=b.dataset.ss;render();return}
