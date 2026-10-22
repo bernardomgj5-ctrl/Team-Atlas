@@ -951,6 +951,7 @@ function dzCell(L,o,k,def){
 function muDmg(t,selAll,defI){const MX=MXD.MX[t.id];const ours=t.roster.map(r=>r.k);
  if(!MX)return `<div class="blk"><h4>💥 Danos</h4><p class="empty">sem cálculo</p></div>`;
  ST.dctx=ST.dctx||{};let i=ST.dctx[t.id];if(i==null||!MX.ctx[i])i=defI!=null&&MX.ctx[defI]!=null?defI:muCtx(t,ours,selAll.filter(o=>MXD.POOL[o])).i;
+ const def=ST.ddir==="def";const dirB=`<div class="dz-ctx" role="group" aria-label="Lado"><b>Lado:</b>${[["off","Nós atacando"],["def","Eles atacando"]].map(([v,l])=>`<button class="chip ${(v==="def")===def?"on":""}" data-ddir="${v}" aria-pressed="${(v==="def")===def}">${l}</button>`).join("")}</div>`;
  const ctxB=`<div class="dz-ctx"><b>Campo:</b>${MX.ctx.map((c,j)=>`<button class="chip ${j===i?"on":""}" data-dctx="${j}" aria-pressed="${j===i}">${esc(dzLabel(c))}</button>`).join("")}</div>`;
  const hd=`<thead><tr><th scope="col">Adversário</th>${ours.map(k=>`<th scope="col"><div>${tile(k,"sm")}<span>${esc(spec(k).n)}</span></div></th>`).join("")}</tr></thead>`;
  const rh=o=>`<th scope="row"><div>${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}${MXD.POOL[o]?`<small>${MXD.POOL[o].spe} Spe</small>`:""}</span></div></th>`;
@@ -958,7 +959,7 @@ function muDmg(t,selAll,defI){const MX=MXD.MX[t.id];const ours=t.roster.map(r=>r
  const tb=def=>`<div class="dz-wrap"><table class="dz ${def?"def":"off"}">${hd}<tbody>${selAll.map(o=>row(o,def)).join("")}</tbody></table></div>`;
  const leg=def=>{const v=["kA","kB","kC"];return `<div class="dz-leg"><span><i style="background:var(--${v[0]})"></i>OHKO garantido</span><span><i style="background:var(--${v[1]})"></i>OHKO possível</span><span><i style="background:var(--${v[2]})"></i>2HKO garantido</span><span><i style="background:var(--dzIm)"></i>imune</span></div>`};
  return `<div class="blk"><h4>💥 Danos</h4><p class="muted">Em destaque, o melhor golpe de cada peça do ${esc(t.id)} contra cada Pokémon selecionado (e o melhor deles contra cada peça); abaixo da linha tracejada, os outros golpes de dano, do mais forte para o mais fraco. Mega já na forma Mega. Sem Helping Hand, Intimidate, telas, boosts nem o clima do adversário (sol do Charizard-Y, chuva do Pelipper, areia da Tyranitar mudam o dano de Fogo e Água).</p>${ctxB}
- <div class="dz-h"><b>Nós atacando</b>${leg(false)}</div>${tb(false)}<div class="dz-h"><b>Eles atacando</b>${leg(true)}</div>${tb(true)}</div>`}
+ ${dirB}<div class="dz-h">${leg(def)}</div>${tb(def)}</div>`}
 function vMatch(){const t=T();ST.oppSel=ST.oppSel||[];const sel=ST.oppSel.filter(o=>MXD.POOL[o]);
  const pool=Object.keys(MXD.POOL).sort((a,b)=>(MXD.POOL[b].u||0)-(MXD.POOL[a].u||0));
  const grid=`<div class="opgrid">${pool.map(o=>`<button class="opb ${sel.includes(o)?"on":""}" data-op="${o}" aria-pressed="${sel.includes(o)}">${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}</span><small>${MXD.POOL[o].lbl?MXD.POOL[o].lbl:MXD.POOL[o].u!=null?String(MXD.POOL[o].u).replace(".",",")+"%":"M-6"}</small></button>`).join("")}</div>`;
@@ -1067,6 +1068,7 @@ document.addEventListener("click",e=>{
  if(b.dataset.lf){ST.lf=b.dataset.lf;render();return}
  if(b.dataset.op){ST.oppSel=ST.oppSel||[];const o=b.dataset.op;const i=ST.oppSel.indexOf(o);if(i>=0)ST.oppSel.splice(i,1);else if(ST.oppSel.length<6)ST.oppSel.push(o);render();return}
  if(b.dataset.clear){ST.oppSel=[];render();return}
+ if(b.dataset.ddir){ST.ddir=b.dataset.ddir;render();return}
  if(b.dataset.dctx!=null){ST.dctx=ST.dctx||{};ST.dctx[T().id]=+b.dataset.dctx;render();return}
  if(b.dataset.core!=null){ST.oppSel=CORES[+b.dataset.core].k.slice();render();const d=document.querySelector('.mudet');if(d&&d.scrollIntoView)d.scrollIntoView({behavior:'smooth',block:'start'});return}
  if(b.dataset.sm){ST.spdMode=b.dataset.sm;render();return}
