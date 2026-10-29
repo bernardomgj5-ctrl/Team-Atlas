@@ -173,6 +173,24 @@ button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visi
 .selbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}.selbar .tile.sm{width:34px;height:34px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 10px;font:600 12.5px "Barlow",sans-serif;cursor:pointer}
 .fopp{border:1px solid var(--line);border-radius:12px;padding:8px}.fopp legend{font-weight:700;padding:0 4px}.fopp .opb{position:relative}.fopp .opb input{position:absolute;opacity:0;pointer-events:none}.fopp details summary{cursor:pointer;margin:6px 0;color:var(--ac);font-weight:600}
+.regs{gap:5px}.regs button{padding:5px 10px;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+.regs .rc{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--ac);color:#fff;font:700 11px/1 "Barlow",sans-serif}
+.regs button.on .rc{background:#fff;color:var(--ac)}
+.opgrid.rg{grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:5px}.rg .opb{padding:5px 2px}.rg .opb span{font-size:11px}
+.opb.nc{opacity:.5}.opb.nc.on{opacity:1}
+.atal{display:grid;grid-template-columns:2fr 3fr 4fr;gap:8px;margin:8px 0 10px}
+.acol{display:flex;flex-direction:column;gap:6px;min-width:0}.acol .bh{text-align:center}
+.acore{display:flex;gap:3px;justify-content:center;border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:5px 3px;cursor:pointer}
+.acore:hover{border-color:var(--ac)}.acore .tile.sm{width:min(40px,7.4vw);height:min(40px,7.4vw);border-radius:8px}
+.selt{border:0;background:none;padding:0;cursor:pointer;border-radius:10px;line-height:0}
+.mgsel{margin:4px 0 12px;padding:6px 10px;background:var(--soft);border-radius:10px}
+.mgrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--line)}.mgsel .bh+.mgrow{border-top:0}
+.mgn{font-weight:700;font-size:14px;min-width:80px}
+.mgopts{display:flex;gap:6px;flex-wrap:wrap}
+.mgo{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:62px;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:4px 6px;cursor:pointer;font:inherit}
+.mgo span{font-size:11.5px;font-weight:700;line-height:1.1}.mgo small{font-size:10.5px;color:var(--muted);line-height:1.1}
+.mgo .tile.sm{width:34px;height:34px;border-radius:8px}.mgo.on{border-color:var(--ac);box-shadow:inset 0 -3px 0 var(--ac)}.mgo.nc{opacity:.6}
+.mgq{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;border:1.5px dashed var(--line);font:800 18px/1 "Barlow Condensed",sans-serif;color:var(--muted)}
 /* ---- speed ---- */
 .spd{list-style:none;padding:0;margin:0;display:grid;gap:4px}
 .spd li{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(44px,22%) 40px;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 8px}
@@ -432,9 +450,287 @@ const OPP_RAW = {
 const MONO_OVR = {Gholdengo:"GH",Garchomp:"GC",Gallade:"GL",Grimmsnarl:"GM",Glimmora:"GI",Gengar:"GE",Staraptor:"SR",Sneasler:"SN",Sinistcha:"SI",Sylveon:"SY",Salamence:"SA",Samurott:"SM",Sableye:"SB",Scovillain:"SC",Sceptile:"SP",Scrafty:"SF",Skeledirge:"SK",Swampert:"SW",Snorlax:"SX",Kingambit:"KB","Kommo-o":"KO",Klefki:"KL",Basculegion:"BG",Baxcalibur:"BX",Banette:"BN",Blastoise:"BL",Mawile:"MW",Milotic:"MI",Maushold:"MS",Metagross:"MG",Morpeko:"MK",Charizard:"CZ",Chandelure:"CH",Ceruledge:"CE",Corviknight:"CV",Torkoal:"TK",Tyranitar:"TT",Tsareena:"TS",Typhlosion:"TY",Talonflame:"TF",Farigiraf:"FG",Floette:"FL",Froslass:"FR",Falinks:"FA",Whimsicott:"WH",Incineroar:"IN",Indeedee:"ID",Hatterene:"HT",Heliolisk:"HE",Excadrill:"EX",Pelipper:"PE",Politoed:"PO",Primarina:"PR",Palafin:"PA",Ninetales:"NT",Volcarona:"VO",Venusaur:"VE",Aegislash:"AE",Altaria:"AL",Absol:"AB",Arcanine:"AR",Annihilape:"AN",Archaludon:"AD",Appletun:"AP",Aerodactyl:"AO",Dragonite:"DN",Dragapult:"DP",Drampa:"DR",Delphox:"DX",Rillaboom:"RB",Raichu:"RY",Rotom:"RW",Golisopod:"GO",Luxray:"LX",Zoroark:"ZO",Wigglytuff:"WG"};
 function oppSpecies(k){
   if(SP[k] && !OPP_RAW[k]) return SP[k];
-  const o = OPP_RAW[k]; if(!o) return {n:k,t:["Normal"],m:k.slice(0,2).toUpperCase(),s:k.split("-")[0],base:k};
+  const o = OPP_RAW[k]||RSPEC[k]; if(!o) return {n:k,t:["Normal"],m:k.slice(0,2).toUpperCase(),s:k.split("-")[0],base:k};
   const base=o[2]; return {n:o[0],t:o[1],m:MONO_OVR[base]||base.slice(0,2).toUpperCase(),s:base.toLowerCase(),base,mega:/Mega/.test(o[0])};
 }
+
+/* ===== ROSTER DA M-C POR REGIÃO (29/out/2026) =====
+   Espécies legais no formato [Gen 9 Champions] VGC 2026 Reg M-C do Pokémon Showdown (data/mods/champions,
+   commit ccfaa20 de 28/out/2026), sem Mítico nem Lendário Restrito: 231 espécies, 264 entradas de preview.
+   Megas e o set Scarf do Garchomp ficam dentro da espécie (variantes): no preview não dá para saber qual vem.
+   Região: a da espécie; formas regionais (Alola, Galar, Hisui, Paldea) ficam na região da forma.
+   Formato: [chave, nome, tipos, nº da Pokédex, região, variantes além da forma base, espécie-base se diferente] */
+const REGIONS=["Kanto","Johto","Hoenn","Sinnoh","Hisui","Unova","Kalos","Alola","Galar","Paldea"];
+const ROSTER=[
+["venusaur","Venusaur",["Grama","Venenoso"],3,"Kanto",["venusaur-mega"]],
+["charizard","Charizard",["Fogo","Voador"],6,"Kanto",["charizard-mega-x","charizard-mega-y"]],
+["blastoise","Blastoise",["Água"],9,"Kanto",["blastoise-mega"]],
+["beedrill","Beedrill",["Inseto","Venenoso"],15,"Kanto",["beedrill-mega"]],
+["pidgeot","Pidgeot",["Normal","Voador"],18,"Kanto",["pidgeot-mega"]],
+["arbok","Arbok",["Venenoso"],24,"Kanto",[]],
+["pikachu","Pikachu",["Elétrico"],25,"Kanto",[]],
+["raichu","Raichu",["Elétrico"],26,"Kanto",["raichu-mega-x","raichu-mega-y"]],
+["raichu-alola","Raichu-Alola",["Elétrico","Psíquico"],26,"Alola",[],"Raichu"],
+["clefable","Clefable",["Fada"],36,"Kanto",["clefable-mega"]],
+["ninetales","Ninetales",["Fogo"],38,"Kanto",[]],
+["ninetales-alola","Ninetales-Alola",["Gelo","Fada"],38,"Alola",[],"Ninetales"],
+["wigglytuff","Wigglytuff",["Normal","Fada"],40,"Kanto",[]],
+["vileplume","Vileplume",["Grama","Venenoso"],45,"Kanto",[]],
+["persian","Persian",["Normal"],53,"Kanto",[]],
+["persian-alola","Persian-Alola",["Sombrio"],53,"Alola",[],"Persian"],
+["arcanine","Arcanine",["Fogo"],59,"Kanto",[]],
+["arcanine-hisui","Arcanine-Hisui",["Fogo","Pedra"],59,"Hisui",[],"Arcanine"],
+["alakazam","Alakazam",["Psíquico"],65,"Kanto",["alakazam-mega"]],
+["machamp","Machamp",["Lutador"],68,"Kanto",[]],
+["victreebel","Victreebel",["Grama","Venenoso"],71,"Kanto",["victreebel-mega"]],
+["slowbro","Slowbro",["Água","Psíquico"],80,"Kanto",["slowbro-mega"]],
+["slowbro-galar","Slowbro-Galar",["Venenoso","Psíquico"],80,"Galar",[],"Slowbro"],
+["farfetchd","Farfetch’d",["Normal","Voador"],83,"Kanto",[]],
+["gengar","Gengar",["Fantasma","Venenoso"],94,"Kanto",["gengar-mega"]],
+["kangaskhan","Kangaskhan",["Normal"],115,"Kanto",["kangaskhan-mega"]],
+["starmie","Starmie",["Água","Psíquico"],121,"Kanto",["starmie-mega"]],
+["mr-mime","Mr. Mime",["Psíquico","Fada"],122,"Kanto",[]],
+["pinsir","Pinsir",["Inseto"],127,"Kanto",["pinsir-mega"]],
+["tauros","Tauros",["Normal"],128,"Kanto",[]],
+["tauros-paldea-combat","Tauros-Paldea-Combat",["Lutador"],128,"Paldea",[],"Tauros"],
+["tauros-paldea-blaze","Tauros-Paldea-Blaze",["Lutador","Fogo"],128,"Paldea",[],"Tauros"],
+["tauros-paldea-aqua","Tauros-Paldea-Aqua",["Lutador","Água"],128,"Paldea",[],"Tauros"],
+["gyarados","Gyarados",["Água","Voador"],130,"Kanto",["gyarados-mega"]],
+["ditto","Ditto",["Normal"],132,"Kanto",[]],
+["vaporeon","Vaporeon",["Água"],134,"Kanto",[]],
+["jolteon","Jolteon",["Elétrico"],135,"Kanto",[]],
+["flareon","Flareon",["Fogo"],136,"Kanto",[]],
+["aerodactyl","Aerodactyl",["Pedra","Voador"],142,"Kanto",["aerodactyl-mega"]],
+["snorlax","Snorlax",["Normal"],143,"Kanto",[]],
+["dragonite","Dragonite",["Dragão","Voador"],149,"Kanto",["dragonite-mega"]],
+["meganium","Meganium",["Grama"],154,"Johto",["meganium-mega"]],
+["typhlosion","Typhlosion",["Fogo"],157,"Johto",[]],
+["typhlosion-hisui","Typhlosion-Hisui",["Fogo","Fantasma"],157,"Hisui",[],"Typhlosion"],
+["feraligatr","Feraligatr",["Água"],160,"Johto",["feraligatr-mega"]],
+["ariados","Ariados",["Inseto","Venenoso"],168,"Johto",[]],
+["ampharos","Ampharos",["Elétrico"],181,"Johto",["ampharos-mega"]],
+["azumarill","Azumarill",["Água","Fada"],184,"Johto",[]],
+["politoed","Politoed",["Água"],186,"Johto",[]],
+["espeon","Espeon",["Psíquico"],196,"Johto",[]],
+["umbreon","Umbreon",["Sombrio"],197,"Johto",[]],
+["slowking","Slowking",["Água","Psíquico"],199,"Johto",[]],
+["slowking-galar","Slowking-Galar",["Venenoso","Psíquico"],199,"Galar",[],"Slowking"],
+["forretress","Forretress",["Inseto","Aço"],205,"Johto",[]],
+["steelix","Steelix",["Aço","Terra"],208,"Johto",["steelix-mega"]],
+["qwilfish","Qwilfish",["Água","Venenoso"],211,"Johto",[]],
+["scizor","Scizor",["Inseto","Aço"],212,"Johto",["scizor-mega"]],
+["heracross","Heracross",["Inseto","Lutador"],214,"Johto",["heracross-mega"]],
+["skarmory","Skarmory",["Aço","Voador"],227,"Johto",["skarmory-mega"]],
+["houndoom","Houndoom",["Sombrio","Fogo"],229,"Johto",["houndoom-mega"]],
+["tyranitar","Tyranitar",["Pedra","Sombrio"],248,"Johto",["tyranitar-mega"]],
+["sceptile","Sceptile",["Grama"],254,"Hoenn",["sceptile-mega"]],
+["blaziken","Blaziken",["Fogo","Lutador"],257,"Hoenn",["blaziken-mega"]],
+["swampert","Swampert",["Água","Terra"],260,"Hoenn",["swampert-mega"]],
+["pelipper","Pelipper",["Água","Voador"],279,"Hoenn",[]],
+["gardevoir","Gardevoir",["Psíquico","Fada"],282,"Hoenn",["gardevoir-mega"]],
+["sableye","Sableye",["Sombrio","Fantasma"],302,"Hoenn",["sableye-mega"]],
+["mawile","Mawile",["Aço","Fada"],303,"Hoenn",["mawile-mega"]],
+["aggron","Aggron",["Aço","Pedra"],306,"Hoenn",["aggron-mega"]],
+["medicham","Medicham",["Lutador","Psíquico"],308,"Hoenn",["medicham-mega"]],
+["manectric","Manectric",["Elétrico"],310,"Hoenn",["manectric-mega"]],
+["swalot","Swalot",["Venenoso"],317,"Hoenn",[]],
+["sharpedo","Sharpedo",["Água","Sombrio"],319,"Hoenn",["sharpedo-mega"]],
+["camerupt","Camerupt",["Fogo","Terra"],323,"Hoenn",["camerupt-mega"]],
+["torkoal","Torkoal",["Fogo"],324,"Hoenn",[]],
+["altaria","Altaria",["Dragão","Voador"],334,"Hoenn",["altaria-mega"]],
+["milotic","Milotic",["Água"],350,"Hoenn",[]],
+["castform","Castform",["Normal"],351,"Hoenn",[]],
+["banette","Banette",["Fantasma"],354,"Hoenn",["banette-mega"]],
+["chimecho","Chimecho",["Psíquico"],358,"Hoenn",["chimecho-mega"]],
+["absol","Absol",["Sombrio"],359,"Hoenn",["absol-mega","absol-mega-z"]],
+["glalie","Glalie",["Gelo"],362,"Hoenn",["glalie-mega"]],
+["salamence","Salamence",["Dragão","Voador"],373,"Hoenn",["salamence-mega"]],
+["metagross","Metagross",["Aço","Psíquico"],376,"Hoenn",["metagross-mega"]],
+["torterra","Torterra",["Grama","Terra"],389,"Sinnoh",[]],
+["infernape","Infernape",["Fogo","Lutador"],392,"Sinnoh",[]],
+["empoleon","Empoleon",["Água","Aço"],395,"Sinnoh",[]],
+["staraptor","Staraptor",["Normal","Voador"],398,"Sinnoh",["staraptor-mega"]],
+["luxray","Luxray",["Elétrico"],405,"Sinnoh",[]],
+["roserade","Roserade",["Grama","Venenoso"],407,"Sinnoh",[]],
+["rampardos","Rampardos",["Pedra"],409,"Sinnoh",[]],
+["bastiodon","Bastiodon",["Pedra","Aço"],411,"Sinnoh",[]],
+["lopunny","Lopunny",["Normal"],428,"Sinnoh",["lopunny-mega"]],
+["spiritomb","Spiritomb",["Fantasma","Sombrio"],442,"Sinnoh",[]],
+["garchomp","Garchomp",["Dragão","Terra"],445,"Sinnoh",["garchomp-scarf","garchomp-mega","garchomp-mega-z"]],
+["lucario","Lucario",["Lutador","Aço"],448,"Sinnoh",["lucario-mega","lucario-mega-z"]],
+["hippowdon","Hippowdon",["Terra"],450,"Sinnoh",[]],
+["toxicroak","Toxicroak",["Venenoso","Lutador"],454,"Sinnoh",[]],
+["abomasnow","Abomasnow",["Grama","Gelo"],460,"Sinnoh",["abomasnow-mega"]],
+["weavile","Weavile",["Sombrio","Gelo"],461,"Sinnoh",[]],
+["rhyperior","Rhyperior",["Terra","Pedra"],464,"Sinnoh",[]],
+["leafeon","Leafeon",["Grama"],470,"Sinnoh",[]],
+["glaceon","Glaceon",["Gelo"],471,"Sinnoh",[]],
+["gliscor","Gliscor",["Terra","Voador"],472,"Sinnoh",[]],
+["mamoswine","Mamoswine",["Gelo","Terra"],473,"Sinnoh",[]],
+["gallade","Gallade",["Psíquico","Lutador"],475,"Sinnoh",["gallade-mega"]],
+["froslass","Froslass",["Gelo","Fantasma"],478,"Sinnoh",["froslass-mega"]],
+["rotom","Rotom",["Elétrico","Fantasma"],479,"Sinnoh",[]],
+["rotom-heat","Rotom-Heat",["Elétrico","Fogo"],479,"Sinnoh",[],"Rotom"],
+["rotom-wash","Rotom-Wash",["Elétrico","Água"],479,"Sinnoh",[],"Rotom"],
+["rotom-frost","Rotom-Frost",["Elétrico","Gelo"],479,"Sinnoh",[],"Rotom"],
+["rotom-fan","Rotom-Fan",["Elétrico","Voador"],479,"Sinnoh",[],"Rotom"],
+["rotom-mow","Rotom-Mow",["Elétrico","Grama"],479,"Sinnoh",[],"Rotom"],
+["serperior","Serperior",["Grama"],497,"Unova",[]],
+["emboar","Emboar",["Fogo","Lutador"],500,"Unova",["emboar-mega"]],
+["samurott","Samurott",["Água"],503,"Unova",[]],
+["samurott-hisui","Samurott-Hisui",["Água","Sombrio"],503,"Hisui",[],"Samurott"],
+["watchog","Watchog",["Normal"],505,"Unova",[]],
+["liepard","Liepard",["Sombrio"],510,"Unova",[]],
+["simisage","Simisage",["Grama"],512,"Unova",[]],
+["simisear","Simisear",["Fogo"],514,"Unova",[]],
+["simipour","Simipour",["Água"],516,"Unova",[]],
+["musharna","Musharna",["Psíquico"],518,"Unova",[]],
+["excadrill","Excadrill",["Terra","Aço"],530,"Unova",["excadrill-mega"]],
+["audino","Audino",["Normal"],531,"Unova",["audino-mega"]],
+["conkeldurr","Conkeldurr",["Lutador"],534,"Unova",[]],
+["scolipede","Scolipede",["Inseto","Venenoso"],545,"Unova",["scolipede-mega"]],
+["whimsicott","Whimsicott",["Grama","Fada"],547,"Unova",[]],
+["krookodile","Krookodile",["Terra","Sombrio"],553,"Unova",[]],
+["scrafty","Scrafty",["Sombrio","Lutador"],560,"Unova",["scrafty-mega"]],
+["cofagrigus","Cofagrigus",["Fantasma"],563,"Unova",[]],
+["garbodor","Garbodor",["Venenoso"],569,"Unova",[]],
+["zoroark","Zoroark",["Sombrio"],571,"Unova",[]],
+["zoroark-hisui","Zoroark-Hisui",["Normal","Fantasma"],571,"Hisui",[],"Zoroark"],
+["reuniclus","Reuniclus",["Psíquico"],579,"Unova",[]],
+["vanilluxe","Vanilluxe",["Gelo"],584,"Unova",[]],
+["emolga","Emolga",["Elétrico","Voador"],587,"Unova",[]],
+["eelektross","Eelektross",["Elétrico"],604,"Unova",["eelektross-mega"]],
+["chandelure","Chandelure",["Fantasma","Fogo"],609,"Unova",["chandelure-mega"]],
+["beartic","Beartic",["Gelo"],614,"Unova",[]],
+["stunfisk","Stunfisk",["Terra","Elétrico"],618,"Unova",[]],
+["stunfisk-galar","Stunfisk-Galar",["Terra","Aço"],618,"Galar",[],"Stunfisk"],
+["golurk","Golurk",["Terra","Fantasma"],623,"Unova",["golurk-mega"]],
+["hydreigon","Hydreigon",["Sombrio","Dragão"],635,"Unova",[]],
+["volcarona","Volcarona",["Inseto","Fogo"],637,"Unova",[]],
+["chesnaught","Chesnaught",["Grama","Lutador"],652,"Kalos",["chesnaught-mega"]],
+["delphox","Delphox",["Fogo","Psíquico"],655,"Kalos",["delphox-mega"]],
+["greninja","Greninja",["Água","Sombrio"],658,"Kalos",["greninja-mega"]],
+["diggersby","Diggersby",["Normal","Terra"],660,"Kalos",[]],
+["talonflame","Talonflame",["Fogo","Voador"],663,"Kalos",[]],
+["vivillon","Vivillon",["Inseto","Voador"],666,"Kalos",[]],
+["pyroar","Pyroar",["Fogo","Normal"],668,"Kalos",["pyroar-mega"]],
+["floette-eternal","Floette-Eternal",["Fada"],670,"Kalos",["floette-mega"],"Floette"],
+["florges","Florges",["Fada"],671,"Kalos",[]],
+["gogoat","Gogoat",["Grama"],673,"Kalos",[]],
+["pangoro","Pangoro",["Lutador","Sombrio"],675,"Kalos",[]],
+["furfrou","Furfrou",["Normal"],676,"Kalos",[]],
+["meowstic","Meowstic",["Psíquico"],678,"Kalos",["meowstic-m-mega"]],
+["meowstic-f","Meowstic-F",["Psíquico"],678,"Kalos",["meowstic-f-mega"],"Meowstic"],
+["aegislash","Aegislash",["Aço","Fantasma"],681,"Kalos",[]],
+["aromatisse","Aromatisse",["Fada"],683,"Kalos",[]],
+["slurpuff","Slurpuff",["Fada"],685,"Kalos",[]],
+["malamar","Malamar",["Sombrio","Psíquico"],687,"Kalos",["malamar-mega"]],
+["barbaracle","Barbaracle",["Pedra","Água"],689,"Kalos",["barbaracle-mega"]],
+["dragalge","Dragalge",["Venenoso","Dragão"],691,"Kalos",["dragalge-mega"]],
+["clawitzer","Clawitzer",["Água"],693,"Kalos",[]],
+["heliolisk","Heliolisk",["Elétrico","Normal"],695,"Kalos",[]],
+["tyrantrum","Tyrantrum",["Pedra","Dragão"],697,"Kalos",[]],
+["aurorus","Aurorus",["Pedra","Gelo"],699,"Kalos",[]],
+["sylveon","Sylveon",["Fada"],700,"Kalos",[]],
+["hawlucha","Hawlucha",["Lutador","Voador"],701,"Kalos",["hawlucha-mega"]],
+["dedenne","Dedenne",["Elétrico","Fada"],702,"Kalos",[]],
+["goodra","Goodra",["Dragão"],706,"Kalos",[]],
+["goodra-hisui","Goodra-Hisui",["Aço","Dragão"],706,"Hisui",[],"Goodra"],
+["klefki","Klefki",["Aço","Fada"],707,"Kalos",[]],
+["trevenant","Trevenant",["Fantasma","Grama"],709,"Kalos",[]],
+["gourgeist","Gourgeist",["Fantasma","Grama"],711,"Kalos",[]],
+["gourgeist-small","Gourgeist-Small",["Fantasma","Grama"],711,"Kalos",[],"Gourgeist"],
+["gourgeist-large","Gourgeist-Large",["Fantasma","Grama"],711,"Kalos",[],"Gourgeist"],
+["gourgeist-super","Gourgeist-Super",["Fantasma","Grama"],711,"Kalos",[],"Gourgeist"],
+["avalugg","Avalugg",["Gelo"],713,"Kalos",[]],
+["avalugg-hisui","Avalugg-Hisui",["Gelo","Pedra"],713,"Hisui",[],"Avalugg"],
+["noivern","Noivern",["Voador","Dragão"],715,"Kalos",[]],
+["decidueye","Decidueye",["Grama","Fantasma"],724,"Alola",[]],
+["decidueye-hisui","Decidueye-Hisui",["Grama","Lutador"],724,"Hisui",[],"Decidueye"],
+["incineroar","Incineroar",["Fogo","Sombrio"],727,"Alola",[]],
+["primarina","Primarina",["Água","Fada"],730,"Alola",[]],
+["toucannon","Toucannon",["Normal","Voador"],733,"Alola",[]],
+["crabominable","Crabominable",["Lutador","Gelo"],740,"Alola",["crabominable-mega"]],
+["lycanroc","Lycanroc",["Pedra"],745,"Alola",[]],
+["lycanroc-midnight","Lycanroc-Midnight",["Pedra"],745,"Alola",[],"Lycanroc"],
+["lycanroc-dusk","Lycanroc-Dusk",["Pedra"],745,"Alola",[],"Lycanroc"],
+["toxapex","Toxapex",["Venenoso","Água"],748,"Alola",[]],
+["mudsdale","Mudsdale",["Terra"],750,"Alola",[]],
+["araquanid","Araquanid",["Água","Inseto"],752,"Alola",[]],
+["salazzle","Salazzle",["Venenoso","Fogo"],758,"Alola",[]],
+["tsareena","Tsareena",["Grama"],763,"Alola",[]],
+["oranguru","Oranguru",["Normal","Psíquico"],765,"Alola",[]],
+["passimian","Passimian",["Lutador"],766,"Alola",[]],
+["golisopod","Golisopod",["Inseto","Água"],768,"Alola",["golisopod-mega"]],
+["mimikyu","Mimikyu",["Fantasma","Fada"],778,"Alola",[]],
+["drampa","Drampa",["Normal","Dragão"],780,"Alola",["drampa-mega"]],
+["kommo-o","Kommo-o",["Dragão","Lutador"],784,"Alola",[]],
+["rillaboom","Rillaboom",["Grama"],812,"Galar",[]],
+["cinderace","Cinderace",["Fogo"],815,"Galar",[]],
+["inteleon","Inteleon",["Água"],818,"Galar",[]],
+["corviknight","Corviknight",["Voador","Aço"],823,"Galar",[]],
+["thievul","Thievul",["Sombrio"],828,"Galar",[]],
+["flapple","Flapple",["Grama","Dragão"],841,"Galar",[]],
+["appletun","Appletun",["Grama","Dragão"],842,"Galar",[]],
+["sandaconda","Sandaconda",["Terra"],844,"Galar",[]],
+["toxtricity","Toxtricity",["Elétrico","Venenoso"],849,"Galar",[]],
+["toxtricity-low-key","Toxtricity-Low-Key",["Elétrico","Venenoso"],849,"Galar",[],"Toxtricity"],
+["grapploct","Grapploct",["Lutador"],853,"Galar",[]],
+["polteageist","Polteageist",["Fantasma"],855,"Galar",[]],
+["hatterene","Hatterene",["Psíquico","Fada"],858,"Galar",[]],
+["grimmsnarl","Grimmsnarl",["Sombrio","Fada"],861,"Galar",[]],
+["perrserker","Perrserker",["Aço"],863,"Galar",[]],
+["sirfetchd","Sirfetch’d",["Lutador"],865,"Galar",[]],
+["mr-rime","Mr. Rime",["Gelo","Psíquico"],866,"Galar",[]],
+["runerigus","Runerigus",["Terra","Fantasma"],867,"Galar",[]],
+["alcremie","Alcremie",["Fada"],869,"Galar",[]],
+["falinks","Falinks",["Lutador"],870,"Galar",["falinks-mega"]],
+["pincurchin","Pincurchin",["Elétrico"],871,"Galar",[]],
+["indeedee","Indeedee",["Psíquico","Normal"],876,"Galar",[]],
+["indeedee-f","Indeedee-F",["Psíquico","Normal"],876,"Galar",[],"Indeedee"],
+["morpeko","Morpeko",["Elétrico","Sombrio"],877,"Galar",[]],
+["dragapult","Dragapult",["Dragão","Fantasma"],887,"Galar",[]],
+["wyrdeer","Wyrdeer",["Normal","Psíquico"],899,"Hisui",[]],
+["kleavor","Kleavor",["Inseto","Pedra"],900,"Hisui",[]],
+["basculegion","Basculegion",["Água","Fantasma"],902,"Hisui",[]],
+["basculegion-f","Basculegion-F",["Água","Fantasma"],902,"Hisui",[],"Basculegion"],
+["sneasler","Sneasler",["Lutador","Venenoso"],903,"Hisui",[]],
+["overqwil","Overqwil",["Sombrio","Venenoso"],904,"Hisui",[]],
+["meowscarada","Meowscarada",["Grama","Sombrio"],908,"Paldea",[]],
+["skeledirge","Skeledirge",["Fogo","Fantasma"],911,"Paldea",[]],
+["quaquaval","Quaquaval",["Água","Lutador"],914,"Paldea",[]],
+["pawmot","Pawmot",["Elétrico","Lutador"],923,"Paldea",[]],
+["maushold","Maushold",["Normal"],925,"Paldea",[]],
+["arboliva","Arboliva",["Grama","Normal"],930,"Paldea",[]],
+["squawkabilly","Squawkabilly",["Normal","Voador"],931,"Paldea",[]],
+["squawkabilly-blue","Squawkabilly-Blue",["Normal","Voador"],931,"Paldea",[],"Squawkabilly"],
+["squawkabilly-yellow","Squawkabilly-Yellow",["Normal","Voador"],931,"Paldea",[],"Squawkabilly"],
+["squawkabilly-white","Squawkabilly-White",["Normal","Voador"],931,"Paldea",[],"Squawkabilly"],
+["garganacl","Garganacl",["Pedra"],934,"Paldea",[]],
+["armarouge","Armarouge",["Fogo","Psíquico"],936,"Paldea",[]],
+["ceruledge","Ceruledge",["Fogo","Fantasma"],937,"Paldea",[]],
+["bellibolt","Bellibolt",["Elétrico"],939,"Paldea",[]],
+["mabosstiff","Mabosstiff",["Sombrio"],943,"Paldea",[]],
+["scovillain","Scovillain",["Grama","Fogo"],952,"Paldea",["scovillain-mega"]],
+["espathra","Espathra",["Psíquico"],956,"Paldea",[]],
+["tinkaton","Tinkaton",["Fada","Aço"],959,"Paldea",[]],
+["palafin","Palafin",["Água"],964,"Paldea",[]],
+["orthworm","Orthworm",["Aço"],968,"Paldea",[]],
+["glimmora","Glimmora",["Pedra","Venenoso"],970,"Paldea",["glimmora-mega"]],
+["houndstone","Houndstone",["Fantasma"],972,"Paldea",[]],
+["annihilape","Annihilape",["Lutador","Fantasma"],979,"Paldea",[]],
+["farigiraf","Farigiraf",["Normal","Psíquico"],981,"Paldea",[]],
+["kingambit","Kingambit",["Sombrio","Aço"],983,"Paldea",[]],
+["baxcalibur","Baxcalibur",["Dragão","Gelo"],998,"Paldea",["baxcalibur-mega"]],
+["gholdengo","Gholdengo",["Aço","Fantasma"],1000,"Paldea",[]],
+["sinistcha","Sinistcha",["Grama","Fantasma"],1013,"Paldea",[]],
+["archaludon","Archaludon",["Aço","Dragão"],1018,"Paldea",[]],
+["hydrapple","Hydrapple",["Grama","Dragão"],1019,"Paldea",[]]];
+/* Megas e sets sem linha no OPP_RAW: [nome, tipos, espécie-base] */
+const FORM_SPEC={"venusaur-mega":["Mega Venusaur",["Grama","Venenoso"],"Venusaur"],"charizard-mega-x":["Mega Charizard-X",["Fogo","Dragão"],"Charizard"],"charizard-mega-y":["Mega Charizard-Y",["Fogo","Voador"],"Charizard"],"blastoise-mega":["Mega Blastoise",["Água"],"Blastoise"],"beedrill-mega":["Mega Beedrill",["Inseto","Venenoso"],"Beedrill"],"pidgeot-mega":["Mega Pidgeot",["Normal","Voador"],"Pidgeot"],"raichu-mega-x":["Mega Raichu-X",["Elétrico"],"Raichu"],"raichu-mega-y":["Mega Raichu-Y",["Elétrico"],"Raichu"],"clefable-mega":["Mega Clefable",["Fada","Voador"],"Clefable"],"alakazam-mega":["Mega Alakazam",["Psíquico"],"Alakazam"],"victreebel-mega":["Mega Victreebel",["Grama","Venenoso"],"Victreebel"],"slowbro-mega":["Mega Slowbro",["Água","Psíquico"],"Slowbro"],"gengar-mega":["Mega Gengar",["Fantasma","Venenoso"],"Gengar"],"steelix-mega":["Mega Steelix",["Aço","Terra"],"Steelix"],"kangaskhan-mega":["Mega Kangaskhan",["Normal"],"Kangaskhan"],"starmie-mega":["Mega Starmie",["Água","Psíquico"],"Starmie"],"scizor-mega":["Mega Scizor",["Inseto","Aço"],"Scizor"],"pinsir-mega":["Mega Pinsir",["Inseto","Voador"],"Pinsir"],"gyarados-mega":["Mega Gyarados",["Água","Sombrio"],"Gyarados"],"aerodactyl-mega":["Mega Aerodactyl",["Pedra","Voador"],"Aerodactyl"],"dragonite-mega":["Mega Dragonite",["Dragão","Voador"],"Dragonite"],"meganium-mega":["Mega Meganium",["Grama","Fada"],"Meganium"],"feraligatr-mega":["Mega Feraligatr",["Água","Dragão"],"Feraligatr"],"ampharos-mega":["Mega Ampharos",["Elétrico","Dragão"],"Ampharos"],"heracross-mega":["Mega Heracross",["Inseto","Lutador"],"Heracross"],"skarmory-mega":["Mega Skarmory",["Aço","Voador"],"Skarmory"],"houndoom-mega":["Mega Houndoom",["Sombrio","Fogo"],"Houndoom"],"tyranitar-mega":["Mega Tyranitar",["Pedra","Sombrio"],"Tyranitar"],"sceptile-mega":["Mega Sceptile",["Grama","Dragão"],"Sceptile"],"blaziken-mega":["Mega Blaziken",["Fogo","Lutador"],"Blaziken"],"swampert-mega":["Mega Swampert",["Água","Terra"],"Swampert"],"gardevoir-mega":["Mega Gardevoir",["Psíquico","Fada"],"Gardevoir"],"gallade-mega":["Mega Gallade",["Psíquico","Lutador"],"Gallade"],"sableye-mega":["Mega Sableye",["Sombrio","Fantasma"],"Sableye"],"mawile-mega":["Mega Mawile",["Aço","Fada"],"Mawile"],"aggron-mega":["Mega Aggron",["Aço"],"Aggron"],"medicham-mega":["Mega Medicham",["Lutador","Psíquico"],"Medicham"],"manectric-mega":["Mega Manectric",["Elétrico"],"Manectric"],"sharpedo-mega":["Mega Sharpedo",["Água","Sombrio"],"Sharpedo"],"camerupt-mega":["Mega Camerupt",["Fogo","Terra"],"Camerupt"],"altaria-mega":["Mega Altaria",["Dragão","Fada"],"Altaria"],"banette-mega":["Mega Banette",["Fantasma"],"Banette"],"chimecho-mega":["Mega Chimecho",["Psíquico","Aço"],"Chimecho"],"absol-mega":["Mega Absol",["Sombrio"],"Absol"],"absol-mega-z":["Mega Absol-Z",["Sombrio","Fantasma"],"Absol"],"glalie-mega":["Mega Glalie",["Gelo"],"Glalie"],"froslass-mega":["Mega Froslass",["Gelo","Fantasma"],"Froslass"],"salamence-mega":["Mega Salamence",["Dragão","Voador"],"Salamence"],"metagross-mega":["Mega Metagross",["Aço","Psíquico"],"Metagross"],"staraptor-mega":["Mega Staraptor",["Lutador","Voador"],"Staraptor"],"lopunny-mega":["Mega Lopunny",["Normal","Lutador"],"Lopunny"],"garchomp-mega":["Mega Garchomp",["Dragão","Terra"],"Garchomp"],"garchomp-mega-z":["Mega Garchomp-Z",["Dragão"],"Garchomp"],"lucario-mega":["Mega Lucario",["Lutador","Aço"],"Lucario"],"lucario-mega-z":["Mega Lucario-Z",["Lutador","Aço"],"Lucario"],"abomasnow-mega":["Mega Abomasnow",["Grama","Gelo"],"Abomasnow"],"emboar-mega":["Mega Emboar",["Fogo","Lutador"],"Emboar"],"excadrill-mega":["Mega Excadrill",["Terra","Aço"],"Excadrill"],"audino-mega":["Mega Audino",["Normal","Fada"],"Audino"],"scolipede-mega":["Mega Scolipede",["Inseto","Venenoso"],"Scolipede"],"scrafty-mega":["Mega Scrafty",["Sombrio","Lutador"],"Scrafty"],"eelektross-mega":["Mega Eelektross",["Elétrico"],"Eelektross"],"chandelure-mega":["Mega Chandelure",["Fantasma","Fogo"],"Chandelure"],"golurk-mega":["Mega Golurk",["Terra","Fantasma"],"Golurk"],"chesnaught-mega":["Mega Chesnaught",["Grama","Lutador"],"Chesnaught"],"delphox-mega":["Mega Delphox",["Fogo","Psíquico"],"Delphox"],"greninja-mega":["Mega Greninja",["Água","Sombrio"],"Greninja"],"pyroar-mega":["Mega Pyroar",["Fogo","Normal"],"Pyroar"],"floette-mega":["Mega Floette",["Fada"],"Floette"],"meowstic-m-mega":["Mega Meowstic-M",["Psíquico"],"Meowstic"],"meowstic-f-mega":["Mega Meowstic-F",["Psíquico"],"Meowstic"],"malamar-mega":["Mega Malamar",["Sombrio","Psíquico"],"Malamar"],"barbaracle-mega":["Mega Barbaracle",["Pedra","Lutador"],"Barbaracle"],"dragalge-mega":["Mega Dragalge",["Venenoso","Dragão"],"Dragalge"],"hawlucha-mega":["Mega Hawlucha",["Lutador","Voador"],"Hawlucha"],"crabominable-mega":["Mega Crabominable",["Lutador","Gelo"],"Crabominable"],"golisopod-mega":["Mega Golisopod",["Inseto","Aço"],"Golisopod"],"drampa-mega":["Mega Drampa",["Normal","Dragão"],"Drampa"],"falinks-mega":["Mega Falinks",["Lutador"],"Falinks"],"scovillain-mega":["Mega Scovillain",["Grama","Fogo"],"Scovillain"],"baxcalibur-mega":["Mega Baxcalibur",["Dragão","Gelo"],"Baxcalibur"],"glimmora-mega":["Mega Glimmora",["Pedra","Venenoso"],"Glimmora"],"garchomp-scarf":["Garchomp (Scarf)",["Dragão","Terra"],"Garchomp"]};
+const RSPEC={},ENTRY={},ENTRY_OF={"whimsicott-tw":"whimsicott"};
+for(const r of ROSTER){const e={k:r[0],n:r[1],t:r[2],num:r[3],r:r[4],v:[r[0]].concat(r[5]),base:r[6]||r[1]};ENTRY[e.k]=e;RSPEC[e.k]=[e.n,e.t,e.base];for(const k of e.v)ENTRY_OF[k]=e.k}
+for(const k in FORM_SPEC)RSPEC[k]=FORM_SPEC[k];
 
 /* ===== TIMES ===== */
 const TEAMS = [
@@ -553,7 +849,7 @@ const SPRITES_PENDENTES = []; /* Maushold do T3/T4 confirmado pelo usuário como
    5) remove sufixos do fim (ex.: whimsicott-tw → whimsicott); 6) espécie (campo s). Depois carrega sprites/<n>.png;
    se o arquivo não existir, usa a arte oficial da PokeAPI; se também falhar, fica o monograma. */
 const DEX = {"bulbasaur":1,"ivysaur":2,"venusaur":3,"charmander":4,"charmeleon":5,"charizard":6,"squirtle":7,"wartortle":8,"blastoise":9,"caterpie":10,"metapod":11,"butterfree":12,"weedle":13,"kakuna":14,"beedrill":15,"pidgey":16,"pidgeotto":17,"pidgeot":18,"rattata":19,"raticate":20,"spearow":21,"fearow":22,"ekans":23,"arbok":24,"pikachu":25,"raichu":26,"sandshrew":27,"sandslash":28,"nidoran-f":29,"nidorina":30,"nidoqueen":31,"nidoran-m":32,"nidorino":33,"nidoking":34,"clefairy":35,"clefable":36,"vulpix":37,"ninetales":38,"jigglypuff":39,"wigglytuff":40,"zubat":41,"golbat":42,"oddish":43,"gloom":44,"vileplume":45,"paras":46,"parasect":47,"venonat":48,"venomoth":49,"diglett":50,"dugtrio":51,"meowth":52,"persian":53,"psyduck":54,"golduck":55,"mankey":56,"primeape":57,"growlithe":58,"arcanine":59,"poliwag":60,"poliwhirl":61,"poliwrath":62,"abra":63,"kadabra":64,"alakazam":65,"machop":66,"machoke":67,"machamp":68,"bellsprout":69,"weepinbell":70,"victreebel":71,"tentacool":72,"tentacruel":73,"geodude":74,"graveler":75,"golem":76,"ponyta":77,"rapidash":78,"slowpoke":79,"slowbro":80,"magnemite":81,"magneton":82,"farfetchd":83,"doduo":84,"dodrio":85,"seel":86,"dewgong":87,"grimer":88,"muk":89,"shellder":90,"cloyster":91,"gastly":92,"haunter":93,"gengar":94,"onix":95,"drowzee":96,"hypno":97,"krabby":98,"kingler":99,"voltorb":100,"electrode":101,"exeggcute":102,"exeggutor":103,"cubone":104,"marowak":105,"hitmonlee":106,"hitmonchan":107,"lickitung":108,"koffing":109,"weezing":110,"rhyhorn":111,"rhydon":112,"chansey":113,"tangela":114,"kangaskhan":115,"horsea":116,"seadra":117,"goldeen":118,"seaking":119,"staryu":120,"starmie":121,"mr-mime":122,"scyther":123,"jynx":124,"electabuzz":125,"magmar":126,"pinsir":127,"tauros":128,"magikarp":129,"gyarados":130,"lapras":131,"ditto":132,"eevee":133,"vaporeon":134,"jolteon":135,"flareon":136,"porygon":137,"omanyte":138,"omastar":139,"kabuto":140,"kabutops":141,"aerodactyl":142,"snorlax":143,"articuno":144,"zapdos":145,"moltres":146,"dratini":147,"dragonair":148,"dragonite":149,"mewtwo":150,"mew":151,"chikorita":152,"bayleef":153,"meganium":154,"cyndaquil":155,"quilava":156,"typhlosion":157,"totodile":158,"croconaw":159,"feraligatr":160,"sentret":161,"furret":162,"hoothoot":163,"noctowl":164,"ledyba":165,"ledian":166,"spinarak":167,"ariados":168,"crobat":169,"chinchou":170,"lanturn":171,"pichu":172,"cleffa":173,"igglybuff":174,"togepi":175,"togetic":176,"natu":177,"xatu":178,"mareep":179,"flaaffy":180,"ampharos":181,"bellossom":182,"marill":183,"azumarill":184,"sudowoodo":185,"politoed":186,"hoppip":187,"skiploom":188,"jumpluff":189,"aipom":190,"sunkern":191,"sunflora":192,"yanma":193,"wooper":194,"quagsire":195,"espeon":196,"umbreon":197,"murkrow":198,"slowking":199,"misdreavus":200,"unown":201,"wobbuffet":202,"girafarig":203,"pineco":204,"forretress":205,"dunsparce":206,"gligar":207,"steelix":208,"snubbull":209,"granbull":210,"qwilfish":211,"scizor":212,"shuckle":213,"heracross":214,"sneasel":215,"teddiursa":216,"ursaring":217,"slugma":218,"magcargo":219,"swinub":220,"piloswine":221,"corsola":222,"remoraid":223,"octillery":224,"delibird":225,"mantine":226,"skarmory":227,"houndour":228,"houndoom":229,"kingdra":230,"phanpy":231,"donphan":232,"porygon2":233,"stantler":234,"smeargle":235,"tyrogue":236,"hitmontop":237,"smoochum":238,"elekid":239,"magby":240,"miltank":241,"blissey":242,"raikou":243,"entei":244,"suicune":245,"larvitar":246,"pupitar":247,"tyranitar":248,"lugia":249,"ho-oh":250,"celebi":251,"treecko":252,"grovyle":253,"sceptile":254,"torchic":255,"combusken":256,"blaziken":257,"mudkip":258,"marshtomp":259,"swampert":260,"poochyena":261,"mightyena":262,"zigzagoon":263,"linoone":264,"wurmple":265,"silcoon":266,"beautifly":267,"cascoon":268,"dustox":269,"lotad":270,"lombre":271,"ludicolo":272,"seedot":273,"nuzleaf":274,"shiftry":275,"taillow":276,"swellow":277,"wingull":278,"pelipper":279,"ralts":280,"kirlia":281,"gardevoir":282,"surskit":283,"masquerain":284,"shroomish":285,"breloom":286,"slakoth":287,"vigoroth":288,"slaking":289,"nincada":290,"ninjask":291,"shedinja":292,"whismur":293,"loudred":294,"exploud":295,"makuhita":296,"hariyama":297,"azurill":298,"nosepass":299,"skitty":300,"delcatty":301,"sableye":302,"mawile":303,"aron":304,"lairon":305,"aggron":306,"meditite":307,"medicham":308,"electrike":309,"manectric":310,"plusle":311,"minun":312,"volbeat":313,"illumise":314,"roselia":315,"gulpin":316,"swalot":317,"carvanha":318,"sharpedo":319,"wailmer":320,"wailord":321,"numel":322,"camerupt":323,"torkoal":324,"spoink":325,"grumpig":326,"spinda":327,"trapinch":328,"vibrava":329,"flygon":330,"cacnea":331,"cacturne":332,"swablu":333,"altaria":334,"zangoose":335,"seviper":336,"lunatone":337,"solrock":338,"barboach":339,"whiscash":340,"corphish":341,"crawdaunt":342,"baltoy":343,"claydol":344,"lileep":345,"cradily":346,"anorith":347,"armaldo":348,"feebas":349,"milotic":350,"castform":351,"kecleon":352,"shuppet":353,"banette":354,"duskull":355,"dusclops":356,"tropius":357,"chimecho":358,"absol":359,"wynaut":360,"snorunt":361,"glalie":362,"spheal":363,"sealeo":364,"walrein":365,"clamperl":366,"huntail":367,"gorebyss":368,"relicanth":369,"luvdisc":370,"bagon":371,"shelgon":372,"salamence":373,"beldum":374,"metang":375,"metagross":376,"regirock":377,"regice":378,"registeel":379,"latias":380,"latios":381,"kyogre":382,"groudon":383,"rayquaza":384,"jirachi":385,"deoxys-normal":386,"turtwig":387,"grotle":388,"torterra":389,"chimchar":390,"monferno":391,"infernape":392,"piplup":393,"prinplup":394,"empoleon":395,"starly":396,"staravia":397,"staraptor":398,"bidoof":399,"bibarel":400,"kricketot":401,"kricketune":402,"shinx":403,"luxio":404,"luxray":405,"budew":406,"roserade":407,"cranidos":408,"rampardos":409,"shieldon":410,"bastiodon":411,"burmy":412,"wormadam-plant":413,"mothim":414,"combee":415,"vespiquen":416,"pachirisu":417,"buizel":418,"floatzel":419,"cherubi":420,"cherrim":421,"shellos":422,"gastrodon":423,"ambipom":424,"drifloon":425,"drifblim":426,"buneary":427,"lopunny":428,"mismagius":429,"honchkrow":430,"glameow":431,"purugly":432,"chingling":433,"stunky":434,"skuntank":435,"bronzor":436,"bronzong":437,"bonsly":438,"mime-jr":439,"happiny":440,"chatot":441,"spiritomb":442,"gible":443,"gabite":444,"garchomp":445,"munchlax":446,"riolu":447,"lucario":448,"hippopotas":449,"hippowdon":450,"skorupi":451,"drapion":452,"croagunk":453,"toxicroak":454,"carnivine":455,"finneon":456,"lumineon":457,"mantyke":458,"snover":459,"abomasnow":460,"weavile":461,"magnezone":462,"lickilicky":463,"rhyperior":464,"tangrowth":465,"electivire":466,"magmortar":467,"togekiss":468,"yanmega":469,"leafeon":470,"glaceon":471,"gliscor":472,"mamoswine":473,"porygon-z":474,"gallade":475,"probopass":476,"dusknoir":477,"froslass":478,"rotom":479,"uxie":480,"mesprit":481,"azelf":482,"dialga":483,"palkia":484,"heatran":485,"regigigas":486,"giratina-altered":487,"cresselia":488,"phione":489,"manaphy":490,"darkrai":491,"shaymin-land":492,"arceus":493,"victini":494,"snivy":495,"servine":496,"serperior":497,"tepig":498,"pignite":499,"emboar":500,"oshawott":501,"dewott":502,"samurott":503,"patrat":504,"watchog":505,"lillipup":506,"herdier":507,"stoutland":508,"purrloin":509,"liepard":510,"pansage":511,"simisage":512,"pansear":513,"simisear":514,"panpour":515,"simipour":516,"munna":517,"musharna":518,"pidove":519,"tranquill":520,"unfezant":521,"blitzle":522,"zebstrika":523,"roggenrola":524,"boldore":525,"gigalith":526,"woobat":527,"swoobat":528,"drilbur":529,"excadrill":530,"audino":531,"timburr":532,"gurdurr":533,"conkeldurr":534,"tympole":535,"palpitoad":536,"seismitoad":537,"throh":538,"sawk":539,"sewaddle":540,"swadloon":541,"leavanny":542,"venipede":543,"whirlipede":544,"scolipede":545,"cottonee":546,"whimsicott":547,"petilil":548,"lilligant":549,"basculin-red-striped":550,"sandile":551,"krokorok":552,"krookodile":553,"darumaka":554,"darmanitan-standard":555,"maractus":556,"dwebble":557,"crustle":558,"scraggy":559,"scrafty":560,"sigilyph":561,"yamask":562,"cofagrigus":563,"tirtouga":564,"carracosta":565,"archen":566,"archeops":567,"trubbish":568,"garbodor":569,"zorua":570,"zoroark":571,"minccino":572,"cinccino":573,"gothita":574,"gothorita":575,"gothitelle":576,"solosis":577,"duosion":578,"reuniclus":579,"ducklett":580,"swanna":581,"vanillite":582,"vanillish":583,"vanilluxe":584,"deerling":585,"sawsbuck":586,"emolga":587,"karrablast":588,"escavalier":589,"foongus":590,"amoonguss":591,"frillish-male":592,"jellicent-male":593,"alomomola":594,"joltik":595,"galvantula":596,"ferroseed":597,"ferrothorn":598,"klink":599,"klang":600,"klinklang":601,"tynamo":602,"eelektrik":603,"eelektross":604,"elgyem":605,"beheeyem":606,"litwick":607,"lampent":608,"chandelure":609,"axew":610,"fraxure":611,"haxorus":612,"cubchoo":613,"beartic":614,"cryogonal":615,"shelmet":616,"accelgor":617,"stunfisk":618,"mienfoo":619,"mienshao":620,"druddigon":621,"golett":622,"golurk":623,"pawniard":624,"bisharp":625,"bouffalant":626,"rufflet":627,"braviary":628,"vullaby":629,"mandibuzz":630,"heatmor":631,"durant":632,"deino":633,"zweilous":634,"hydreigon":635,"larvesta":636,"volcarona":637,"cobalion":638,"terrakion":639,"virizion":640,"tornadus-incarnate":641,"thundurus-incarnate":642,"reshiram":643,"zekrom":644,"landorus-incarnate":645,"kyurem":646,"keldeo-ordinary":647,"meloetta-aria":648,"genesect":649,"chespin":650,"quilladin":651,"chesnaught":652,"fennekin":653,"braixen":654,"delphox":655,"froakie":656,"frogadier":657,"greninja":658,"bunnelby":659,"diggersby":660,"fletchling":661,"fletchinder":662,"talonflame":663,"scatterbug":664,"spewpa":665,"vivillon":666,"litleo":667,"pyroar-male":668,"flabebe":669,"floette":670,"florges":671,"skiddo":672,"gogoat":673,"pancham":674,"pangoro":675,"furfrou":676,"espurr":677,"meowstic-male":678,"honedge":679,"doublade":680,"aegislash-shield":681,"spritzee":682,"aromatisse":683,"swirlix":684,"slurpuff":685,"inkay":686,"malamar":687,"binacle":688,"barbaracle":689,"skrelp":690,"dragalge":691,"clauncher":692,"clawitzer":693,"helioptile":694,"heliolisk":695,"tyrunt":696,"tyrantrum":697,"amaura":698,"aurorus":699,"sylveon":700,"hawlucha":701,"dedenne":702,"carbink":703,"goomy":704,"sliggoo":705,"goodra":706,"klefki":707,"phantump":708,"trevenant":709,"pumpkaboo-average":710,"gourgeist-average":711,"bergmite":712,"avalugg":713,"noibat":714,"noivern":715,"xerneas":716,"yveltal":717,"zygarde-50":718,"diancie":719,"hoopa":720,"volcanion":721,"rowlet":722,"dartrix":723,"decidueye":724,"litten":725,"torracat":726,"incineroar":727,"popplio":728,"brionne":729,"primarina":730,"pikipek":731,"trumbeak":732,"toucannon":733,"yungoos":734,"gumshoos":735,"grubbin":736,"charjabug":737,"vikavolt":738,"crabrawler":739,"crabominable":740,"oricorio-baile":741,"cutiefly":742,"ribombee":743,"rockruff":744,"lycanroc-midday":745,"wishiwashi-solo":746,"mareanie":747,"toxapex":748,"mudbray":749,"mudsdale":750,"dewpider":751,"araquanid":752,"fomantis":753,"lurantis":754,"morelull":755,"shiinotic":756,"salandit":757,"salazzle":758,"stufful":759,"bewear":760,"bounsweet":761,"steenee":762,"tsareena":763,"comfey":764,"oranguru":765,"passimian":766,"wimpod":767,"golisopod":768,"sandygast":769,"palossand":770,"pyukumuku":771,"type-null":772,"silvally":773,"minior-red-meteor":774,"komala":775,"turtonator":776,"togedemaru":777,"mimikyu-disguised":778,"bruxish":779,"drampa":780,"dhelmise":781,"jangmo-o":782,"hakamo-o":783,"kommo-o":784,"tapu-koko":785,"tapu-lele":786,"tapu-bulu":787,"tapu-fini":788,"cosmog":789,"cosmoem":790,"solgaleo":791,"lunala":792,"nihilego":793,"buzzwole":794,"pheromosa":795,"xurkitree":796,"celesteela":797,"kartana":798,"guzzlord":799,"necrozma":800,"magearna":801,"marshadow":802,"poipole":803,"naganadel":804,"stakataka":805,"blacephalon":806,"zeraora":807,"meltan":808,"melmetal":809,"grookey":810,"thwackey":811,"rillaboom":812,"scorbunny":813,"raboot":814,"cinderace":815,"sobble":816,"drizzile":817,"inteleon":818,"skwovet":819,"greedent":820,"rookidee":821,"corvisquire":822,"corviknight":823,"blipbug":824,"dottler":825,"orbeetle":826,"nickit":827,"thievul":828,"gossifleur":829,"eldegoss":830,"wooloo":831,"dubwool":832,"chewtle":833,"drednaw":834,"yamper":835,"boltund":836,"rolycoly":837,"carkol":838,"coalossal":839,"applin":840,"flapple":841,"appletun":842,"silicobra":843,"sandaconda":844,"cramorant":845,"arrokuda":846,"barraskewda":847,"toxel":848,"toxtricity-amped":849,"sizzlipede":850,"centiskorch":851,"clobbopus":852,"grapploct":853,"sinistea":854,"polteageist":855,"hatenna":856,"hattrem":857,"hatterene":858,"impidimp":859,"morgrem":860,"grimmsnarl":861,"obstagoon":862,"perrserker":863,"cursola":864,"sirfetchd":865,"mr-rime":866,"runerigus":867,"milcery":868,"alcremie":869,"falinks":870,"pincurchin":871,"snom":872,"frosmoth":873,"stonjourner":874,"eiscue-ice":875,"indeedee-male":876,"morpeko-full-belly":877,"cufant":878,"copperajah":879,"dracozolt":880,"arctozolt":881,"dracovish":882,"arctovish":883,"duraludon":884,"dreepy":885,"drakloak":886,"dragapult":887,"zacian":888,"zamazenta":889,"eternatus":890,"kubfu":891,"urshifu-single-strike":892,"zarude":893,"regieleki":894,"regidrago":895,"glastrier":896,"spectrier":897,"calyrex":898,"wyrdeer":899,"kleavor":900,"ursaluna":901,"basculegion-male":902,"sneasler":903,"overqwil":904,"enamorus-incarnate":905,"sprigatito":906,"floragato":907,"meowscarada":908,"fuecoco":909,"crocalor":910,"skeledirge":911,"quaxly":912,"quaxwell":913,"quaquaval":914,"lechonk":915,"oinkologne-male":916,"tarountula":917,"spidops":918,"nymble":919,"lokix":920,"pawmi":921,"pawmo":922,"pawmot":923,"tandemaus":924,"maushold-family-of-four":925,"fidough":926,"dachsbun":927,"smoliv":928,"dolliv":929,"arboliva":930,"squawkabilly-green-plumage":931,"nacli":932,"naclstack":933,"garganacl":934,"charcadet":935,"armarouge":936,"ceruledge":937,"tadbulb":938,"bellibolt":939,"wattrel":940,"kilowattrel":941,"maschiff":942,"mabosstiff":943,"shroodle":944,"grafaiai":945,"bramblin":946,"brambleghast":947,"toedscool":948,"toedscruel":949,"klawf":950,"capsakid":951,"scovillain":952,"rellor":953,"rabsca":954,"flittle":955,"espathra":956,"tinkatink":957,"tinkatuff":958,"tinkaton":959,"wiglett":960,"wugtrio":961,"bombirdier":962,"finizen":963,"palafin-zero":964,"varoom":965,"revavroom":966,"cyclizar":967,"orthworm":968,"glimmet":969,"glimmora":970,"greavard":971,"houndstone":972,"flamigo":973,"cetoddle":974,"cetitan":975,"veluza":976,"dondozo":977,"tatsugiri-curly":978,"annihilape":979,"clodsire":980,"farigiraf":981,"dudunsparce-two-segment":982,"kingambit":983,"great-tusk":984,"scream-tail":985,"brute-bonnet":986,"flutter-mane":987,"slither-wing":988,"sandy-shocks":989,"iron-treads":990,"iron-bundle":991,"iron-hands":992,"iron-jugulis":993,"iron-moth":994,"iron-thorns":995,"frigibax":996,"arctibax":997,"baxcalibur":998,"gimmighoul":999,"gholdengo":1000,"wo-chien":1001,"chien-pao":1002,"ting-lu":1003,"chi-yu":1004,"roaring-moon":1005,"iron-valiant":1006,"koraidon":1007,"miraidon":1008,"walking-wake":1009,"iron-leaves":1010,"dipplin":1011,"poltchageist":1012,"sinistcha":1013,"okidogi":1014,"munkidori":1015,"fezandipiti":1016,"ogerpon":1017,"archaludon":1018,"hydrapple":1019,"gouging-fire":1020,"raging-bolt":1021,"iron-boulder":1022,"iron-crown":1023,"terapagos":1024,"pecharunt":1025,"deoxys-attack":10001,"deoxys-defense":10002,"deoxys-speed":10003,"wormadam-sandy":10004,"wormadam-trash":10005,"shaymin-sky":10006,"giratina-origin":10007,"rotom-heat":10008,"rotom-wash":10009,"rotom-frost":10010,"rotom-fan":10011,"rotom-mow":10012,"castform-sunny":10013,"castform-rainy":10014,"castform-snowy":10015,"basculin-blue-striped":10016,"darmanitan-zen":10017,"meloetta-pirouette":10018,"tornadus-therian":10019,"thundurus-therian":10020,"landorus-therian":10021,"kyurem-black":10022,"kyurem-white":10023,"keldeo-resolute":10024,"meowstic-female":10025,"aegislash-blade":10026,"pumpkaboo-small":10027,"pumpkaboo-large":10028,"pumpkaboo-super":10029,"gourgeist-small":10030,"gourgeist-large":10031,"gourgeist-super":10032,"venusaur-mega":10033,"charizard-mega-x":10034,"charizard-mega-y":10035,"blastoise-mega":10036,"alakazam-mega":10037,"gengar-mega":10038,"kangaskhan-mega":10039,"pinsir-mega":10040,"gyarados-mega":10041,"aerodactyl-mega":10042,"mewtwo-mega-x":10043,"mewtwo-mega-y":10044,"ampharos-mega":10045,"scizor-mega":10046,"heracross-mega":10047,"houndoom-mega":10048,"tyranitar-mega":10049,"blaziken-mega":10050,"gardevoir-mega":10051,"mawile-mega":10052,"aggron-mega":10053,"medicham-mega":10054,"manectric-mega":10055,"banette-mega":10056,"absol-mega":10057,"garchomp-mega":10058,"lucario-mega":10059,"abomasnow-mega":10060,"floette-eternal":10061,"latias-mega":10062,"latios-mega":10063,"swampert-mega":10064,"sceptile-mega":10065,"sableye-mega":10066,"altaria-mega":10067,"gallade-mega":10068,"audino-mega":10069,"sharpedo-mega":10070,"slowbro-mega":10071,"steelix-mega":10072,"pidgeot-mega":10073,"glalie-mega":10074,"diancie-mega":10075,"metagross-mega":10076,"kyogre-primal":10077,"groudon-primal":10078,"rayquaza-mega":10079,"pikachu-rock-star":10080,"pikachu-belle":10081,"pikachu-pop-star":10082,"pikachu-phd":10083,"pikachu-libre":10084,"pikachu-cosplay":10085,"hoopa-unbound":10086,"camerupt-mega":10087,"lopunny-mega":10088,"salamence-mega":10089,"beedrill-mega":10090,"rattata-alola":10091,"raticate-alola":10092,"raticate-totem-alola":10093,"pikachu-original-cap":10094,"pikachu-hoenn-cap":10095,"pikachu-sinnoh-cap":10096,"pikachu-unova-cap":10097,"pikachu-kalos-cap":10098,"pikachu-alola-cap":10099,"raichu-alola":10100,"sandshrew-alola":10101,"sandslash-alola":10102,"vulpix-alola":10103,"ninetales-alola":10104,"diglett-alola":10105,"dugtrio-alola":10106,"meowth-alola":10107,"persian-alola":10108,"geodude-alola":10109,"graveler-alola":10110,"golem-alola":10111,"grimer-alola":10112,"muk-alola":10113,"exeggutor-alola":10114,"marowak-alola":10115,"greninja-battle-bond":10116,"greninja-ash":10117,"zygarde-10-power-construct":10118,"zygarde-50-power-construct":10119,"zygarde-complete":10120,"gumshoos-totem":10121,"vikavolt-totem":10122,"oricorio-pom-pom":10123,"oricorio-pau":10124,"oricorio-sensu":10125,"lycanroc-midnight":10126,"wishiwashi-school":10127,"lurantis-totem":10128,"salazzle-totem":10129,"minior-orange-meteor":10130,"minior-yellow-meteor":10131,"minior-green-meteor":10132,"minior-blue-meteor":10133,"minior-indigo-meteor":10134,"minior-violet-meteor":10135,"minior-red":10136,"minior-orange":10137,"minior-yellow":10138,"minior-green":10139,"minior-blue":10140,"minior-indigo":10141,"minior-violet":10142,"mimikyu-busted":10143,"mimikyu-totem-disguised":10144,"mimikyu-totem-busted":10145,"kommo-o-totem":10146,"magearna-original":10147,"pikachu-partner-cap":10148,"marowak-totem":10149,"ribombee-totem":10150,"rockruff-own-tempo":10151,"lycanroc-dusk":10152,"araquanid-totem":10153,"togedemaru-totem":10154,"necrozma-dusk":10155,"necrozma-dawn":10156,"necrozma-ultra":10157,"pikachu-starter":10158,"eevee-starter":10159,"pikachu-world-cap":10160,"meowth-galar":10161,"ponyta-galar":10162,"rapidash-galar":10163,"slowpoke-galar":10164,"slowbro-galar":10165,"farfetchd-galar":10166,"weezing-galar":10167,"mr-mime-galar":10168,"articuno-galar":10169,"zapdos-galar":10170,"moltres-galar":10171,"slowking-galar":10172,"corsola-galar":10173,"zigzagoon-galar":10174,"linoone-galar":10175,"darumaka-galar":10176,"darmanitan-galar-standard":10177,"darmanitan-galar-zen":10178,"yamask-galar":10179,"stunfisk-galar":10180,"zygarde-10":10181,"cramorant-gulping":10182,"cramorant-gorging":10183,"toxtricity-low-key":10184,"eiscue-noice":10185,"indeedee-female":10186,"morpeko-hangry":10187,"zacian-crowned":10188,"zamazenta-crowned":10189,"eternatus-eternamax":10190,"urshifu-rapid-strike":10191,"zarude-dada":10192,"calyrex-ice":10193,"calyrex-shadow":10194,"venusaur-gmax":10195,"charizard-gmax":10196,"blastoise-gmax":10197,"butterfree-gmax":10198,"pikachu-gmax":10199,"meowth-gmax":10200,"machamp-gmax":10201,"gengar-gmax":10202,"kingler-gmax":10203,"lapras-gmax":10204,"eevee-gmax":10205,"snorlax-gmax":10206,"garbodor-gmax":10207,"melmetal-gmax":10208,"rillaboom-gmax":10209,"cinderace-gmax":10210,"inteleon-gmax":10211,"corviknight-gmax":10212,"orbeetle-gmax":10213,"drednaw-gmax":10214,"coalossal-gmax":10215,"flapple-gmax":10216,"appletun-gmax":10217,"sandaconda-gmax":10218,"toxtricity-amped-gmax":10219,"centiskorch-gmax":10220,"hatterene-gmax":10221,"grimmsnarl-gmax":10222,"alcremie-gmax":10223,"copperajah-gmax":10224,"duraludon-gmax":10225,"urshifu-single-strike-gmax":10226,"urshifu-rapid-strike-gmax":10227,"toxtricity-low-key-gmax":10228,"growlithe-hisui":10229,"arcanine-hisui":10230,"voltorb-hisui":10231,"electrode-hisui":10232,"typhlosion-hisui":10233,"qwilfish-hisui":10234,"sneasel-hisui":10235,"samurott-hisui":10236,"lilligant-hisui":10237,"zorua-hisui":10238,"zoroark-hisui":10239,"braviary-hisui":10240,"sliggoo-hisui":10241,"goodra-hisui":10242,"avalugg-hisui":10243,"decidueye-hisui":10244,"dialga-origin":10245,"palkia-origin":10246,"basculin-white-striped":10247,"basculegion-female":10248,"enamorus-therian":10249,"tauros-paldea-combat-breed":10250,"tauros-paldea-blaze-breed":10251,"tauros-paldea-aqua-breed":10252,"wooper-paldea":10253,"oinkologne-female":10254,"dudunsparce-three-segment":10255,"palafin-hero":10256,"maushold-family-of-three":10257,"tatsugiri-droopy":10258,"tatsugiri-stretchy":10259,"squawkabilly-blue-plumage":10260,"squawkabilly-yellow-plumage":10261,"squawkabilly-white-plumage":10262,"gimmighoul-roaming":10263,"koraidon-limited-build":10264,"koraidon-sprinting-build":10265,"koraidon-swimming-build":10266,"koraidon-gliding-build":10267,"miraidon-low-power-mode":10268,"miraidon-drive-mode":10269,"miraidon-aquatic-mode":10270,"miraidon-glide-mode":10271,"ursaluna-bloodmoon":10272,"ogerpon-wellspring-mask":10273,"ogerpon-hearthflame-mask":10274,"ogerpon-cornerstone-mask":10275,"terapagos-terastal":10276,"terapagos-stellar":10277,"clefable-mega":10278,"victreebel-mega":10279,"starmie-mega":10280,"dragonite-mega":10281,"meganium-mega":10282,"feraligatr-mega":10283,"skarmory-mega":10284,"froslass-mega":10285,"emboar-mega":10286,"excadrill-mega":10287,"scolipede-mega":10288,"scrafty-mega":10289,"eelektross-mega":10290,"chandelure-mega":10291,"chesnaught-mega":10292,"delphox-mega":10293,"greninja-mega":10294,"pyroar-mega":10295,"floette-mega":10296,"malamar-mega":10297,"barbaracle-mega":10298,"dragalge-mega":10299,"hawlucha-mega":10300,"zygarde-mega":10301,"drampa-mega":10302,"falinks-mega":10303,"raichu-mega-x":10304,"raichu-mega-y":10305,"chimecho-mega":10306,"absol-mega-z":10307,"staraptor-mega":10308,"garchomp-mega-z":10309,"lucario-mega-z":10310,"heatran-mega":10311,"darkrai-mega":10312,"golurk-mega":10313,"meowstic-male-mega":10314,"crabominable-mega":10315,"golisopod-mega":10316,"magearna-mega":10317,"magearna-original-mega":10318,"zeraora-mega":10319,"scovillain-mega":10320,"glimmora-mega":10321,"tatsugiri-curly-mega":10322,"tatsugiri-droopy-mega":10323,"tatsugiri-stretchy-mega":10324,"baxcalibur-mega":10325,"meowstic-female-mega":10326};
-const SPRITE_ALIAS = {"indeedee-f":"indeedee-female","indeedee-m":"indeedee-male","maushold-four":"maushold-family-of-four","maushold-three":"maushold-family-of-three"};
+const SPRITE_ALIAS = {"meowstic-f":"meowstic-female","meowstic-m-mega":"meowstic-male-mega","meowstic-f-mega":"meowstic-female-mega","basculegion-f":"basculegion-female","indeedee-f":"indeedee-female","indeedee-m":"indeedee-male","maushold-four":"maushold-family-of-four","maushold-three":"maushold-family-of-three"};
 const DEX_DEFAULT = (()=>{const o={};for(const [n,id] of Object.entries(DEX)){const p=n.split("-");for(let i=1;i<p.length;i++){const b=p.slice(0,i).join("-");if(!(b in o)||id<o[b])o[b]=id}}return o})();
 function dexOne(n){if(!n)return 0;n=SPRITE_ALIAS[n]||n;if(DEX[n])return DEX[n];
   if(n.startsWith("mega-")){const r=n.slice(5)+"-mega";if(DEX[r])return DEX[r]}
@@ -571,8 +867,8 @@ const artUrl=id=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ST={team:0,tab:"times",spdMode:"normal",spdScope:"team",pScope:"team",pOpen:null,games:[],db:null,dbState:"loading"};
-try{const s=JSON.parse(localStorage.getItem("atlas-ui-v2")||"{}");if(s.team!=null&&s.team>=0&&s.team<TEAMS.length)ST.team=s.team;if(s.tab)ST.tab=s.tab;if(Array.isArray(s.oppSel))ST.oppSel=s.oppSel;}catch(e){}
-function saveUI(){try{localStorage.setItem("atlas-ui-v2",JSON.stringify({team:ST.team,tab:ST.tab,oppSel:ST.oppSel||[]}))}catch(e){}}
+try{const s=JSON.parse(localStorage.getItem("atlas-ui-v2")||"{}");if(s.team!=null&&s.team>=0&&s.team<TEAMS.length)ST.team=s.team;if(s.tab)ST.tab=s.tab;if(Array.isArray(s.oppSel))ST.oppSel=s.oppSel;if(s.oppVar&&typeof s.oppVar==="object")ST.oppVar=s.oppVar;if(typeof s.reg==="string")ST.reg=s.reg;}catch(e){}
+function saveUI(){try{localStorage.setItem("atlas-ui-v2",JSON.stringify({team:ST.team,tab:ST.tab,oppSel:ST.oppSel||[],oppVar:ST.oppVar||{},reg:ST.reg||"atalhos"}))}catch(e){}}
 
 function spec(k){return SP[k]?Object.assign({own:1},SP[k]):oppSpecies(k)}
 function tcol(t){return TYPE_COLOR[t]||"#888"}
@@ -835,53 +1131,95 @@ function dzCell(L,o,k,def){
  if(p>0)ex.push("prioridade");if(acc<1)ex.push("precisão "+Math.round(acc*100)+"%");if(SPREAD.has(nm))ex.push("em área");
  const sash=lo>=100&&(def?MYF.sash.includes(k):MXD.POOL[o].sash);
  return `<td class="${cl}"><span class="dz-m">${esc(nm)}</span><span class="dz-r">${Math.round(lo)}–${Math.round(hi)}%</span>${ex.length?`<span class="dz-t">${esc(ex.join(" · "))}</span>`:""}${sash?`<span class="dz-s">Sash segura com HP cheio</span>`:""}${rest?`<ul class="dz-o">${rest}</ul>`:""}</td>`}
-function muDmg(t,selAll,defI){const MX=MXD.MX[t.id];const ours=t.roster.map(r=>r.k);
+function muDmg(t,selAll,defI,W){W=W||{};const MX=MXD.MX[t.id];const ours=t.roster.map(r=>r.k);
  if(!MX)return `<div class="blk"><h4>💥 Danos</h4><p class="empty">sem cálculo</p></div>`;
  ST.dctx=ST.dctx||{};let i=ST.dctx[t.id];if(i==null||!MX.ctx[i])i=defI!=null&&MX.ctx[defI]!=null?defI:muCtx(t,ours,selAll.filter(o=>MXD.POOL[o])).i;
  const def=ST.ddir==="def";const dirB=`<div class="dz-ctx" role="group" aria-label="Lado"><b>Lado:</b>${[["off","Nós atacando"],["def","Eles atacando"]].map(([v,l])=>`<button class="chip ${(v==="def")===def?"on":""}" data-ddir="${v}" aria-pressed="${(v==="def")===def}">${l}</button>`).join("")}</div>`;
  const ctxB=`<div class="dz-ctx"><b>Campo:</b>${MX.ctx.map((c,j)=>`<button class="chip ${j===i?"on":""}" data-dctx="${j}" aria-pressed="${j===i}">${esc(dzLabel(c))}</button>`).join("")}</div>`;
  const hd=`<thead><tr><th scope="col">Adversário</th>${ours.map(k=>`<th scope="col"><div>${tile(k,"sm")}<span>${esc(spec(k).n)}</span></div></th>`).join("")}</tr></thead>`;
- const rh=o=>`<th scope="row"><div>${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}${MXD.POOL[o]?`<small>${MXD.POOL[o].spe} Spe</small>`:""}</span></div></th>`;
+ const rh=o=>`<th scope="row"><div>${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}${MXD.POOL[o]?`<small>${MXD.POOL[o].spe} Spe${W[o]!=null?` · forma possível (${pctW(W[o])})`:""}</small>`:""}</span></div></th>`;
  const row=(o,def)=>MXD.POOL[o]?`<tr>${rh(o)}${ours.map(k=>dzCell(dzBest(def?MX.d[k]:MX.o[k],o,i),o,k,def)).join("")}</tr>`:`<tr>${rh(o)}<td class="dz-na" colspan="${ours.length}">sem cálculo</td></tr>`;
  const tb=def=>`<div class="dz-wrap"><table class="dz ${def?"def":"off"}">${hd}<tbody>${selAll.map(o=>row(o,def)).join("")}</tbody></table></div>`;
  const leg=def=>{const v=["kA","kB","kC"];return `<div class="dz-leg"><span><i style="background:var(--${v[0]})"></i>OHKO garantido</span><span><i style="background:var(--${v[1]})"></i>OHKO possível</span><span><i style="background:var(--${v[2]})"></i>2HKO garantido</span><span><i style="background:var(--dzIm)"></i>imune</span></div>`};
- return `<div class="blk"><h4>💥 Danos</h4><p class="muted">Em destaque, o melhor golpe de cada peça do ${esc(t.id)} contra cada Pokémon selecionado (e o melhor deles contra cada peça); abaixo da linha tracejada, os outros golpes de dano, do mais forte para o mais fraco. Mega já na forma Mega. Sem Helping Hand, Intimidate, telas, boosts nem o clima do adversário (sol do Charizard-Y, chuva do Pelipper, areia da Tyranitar mudam o dano de Fogo e Água).</p>${ctxB}
+ return `<div class="blk"><h4>💥 Danos</h4>${ctxB}
  ${dirB}<div class="dz-h">${leg(def)}</div>${tb(def)}</div>`}
-function vMatch(){const t=T();ST.oppSel=ST.oppSel||[];const sel=ST.oppSel.filter(o=>MXD.POOL[o]);
- const pool=Object.keys(MXD.POOL).sort((a,b)=>(MXD.POOL[b].u||0)-(MXD.POOL[a].u||0));
- const grid=`<div class="opgrid">${pool.map(o=>`<button class="opb ${sel.includes(o)?"on":""}" data-op="${o}" aria-pressed="${sel.includes(o)}">${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}</span><small>${MXD.POOL[o].lbl?MXD.POOL[o].lbl:MXD.POOL[o].u!=null?String(MXD.POOL[o].u).replace(".",",")+"%":"M-6"}</small></button>`).join("")}</div>`;
- const presets=`<details class="legend"><summary>Atalhos: cores do meta</summary><div class="chips">${CORES.map((c,i)=>`<button class="chip" data-core="${i}">${esc(c.k.map(k=>spec(k).n).join(" + "))}</button>`).join("")}</div></details>`;
- /* Uso: share de pontos nos eventos oficiais M-C (Limitless VGC, 06/out/2026). Os 5 últimos vieram dos nossos jogos de ladder. */
-/* Replays (nossos M-B e M-C + públicos M-C rating ≥ 1300; 634 partidas baixadas em 20/out) em que a espécie apareceu na prévia, para as que não têm share no Limitless. */
-const EXTRA_R={"raichu-mega-x":90,"scizor-mega":65,"meowstic-m-mega":19,"espathra":12,"chandelure":8,"aerodactyl":7,"gliscor":7,"sceptile-mega":6,"raichu":5,"grapploct":5,"meowstic":4,"chesnaught-mega":3,"clefable-mega":3,"chandelure-mega":3,"quaquaval":3,"araquanid":3,"altaria-mega":3,"mamoswine":3,"lucario-mega":3,"ninetales":3,"garchomp-mega":3,"drampa-mega":2,"blastoise":2,"samurott-hisui":2,"appletun":2,"luxray":2,"blaziken":2,"houndoom":2,"slowking":2,"glaceon":2,"tyranitar":2,"absol-mega-z":2,"starmie-mega":2,"simisear":1,"conkeldurr":1,"delphox":1,"metagross":1,"morpeko":1,"froslass":1,"sableye":1,"oranguru":1,"orthworm":1,"baxcalibur":1,"wyrdeer":1,"venusaur-mega":1,"dragonite":1,"swampert":1,"golisopod":1,"vanilluxe":1,"greninja-mega":1,"rhyperior":1};
-const EXTRA_U={"glimmora-mega": 6.04, "dragonite-mega": 5.15, "aerodactyl-mega": 3.24, "primarina": 2.55, "toxapex": 2.55, "vivillon": 2.35, "annihilape": 1.9, "blastoise-mega": 1.9, "lucario-mega-z": 1.66, "altaria": 1.46, "hatterene": 1.38, "talonflame": 1.26, "pawmot": 1.22, "blaziken-mega": 1.13, "meowstic-f-mega": 1.13, "klefki": 1.05, "baxcalibur-mega": 1.05, "camerupt-mega": 0.97, "pyroar-mega": 0.89, "maushold": 0.85, "aegislash": 0.69, "scovillain-mega": 0.65, "lycanroc-dusk": 0.65, "azumarill": 0.61, "mawile-mega": 0.61, "tsareena": 0.57, "hippowdon": 0.57, "kangaskhan-mega": 0.49, "ninetales-alola": 0.45};
-const EXTRA=["meowstic-f-mega", "azumarill", "simisear", "conkeldurr", "delphox", "froslass", "sableye"].filter(o=>!MXD.POOL[o]);const selAll=ST.oppSel.slice(),outP=selAll.filter(o=>!MXD.POOL[o]);
- const extraG=`<details class="legend" ${outP.length?"open":""}><summary>Fora do cálculo (marque para avisar)</summary><p class="muted">Porcentagem: uso nos eventos oficiais M-C (Limitless). "Replays": quantas vezes a espécie apareceu na prévia dos seus replays (M-B e M-C) ou dos replays públicos M-C analisados (rating ≥ 1300). Nenhum deles tem tabela de dano ainda.</p><div class="opgrid">${EXTRA.map(o=>`<button class="opb ${selAll.includes(o)?"on":""}" data-op="${o}" aria-pressed="${selAll.includes(o)}">${tile(o,"sm",{role:false})}<span>${esc(spec(o).n)}</span><small>${EXTRA_U[o]?String(EXTRA_U[o]).replace(".",",")+"% · ":EXTRA_R[o]?EXTRA_R[o]+(EXTRA_R[o]>1?" replays":" replay")+" · ":""}sem cálculo</small></button>`).join("")}</div></details>`;
- const head=`<h1 class="h">Matchups <span>${t.id}</span></h1><p class="muted">Toque nos Pokémon do adversário (até 6, como no preview). O cálculo roda no aparelho.</p><div class="selbar"><b>${selAll.length}/6 selecionados</b>${selAll.length?`<span class="mu-opp">${selAll.map(o=>tile(o,"sm",{role:false})).join("")}</span><button class="chip" data-clear="1">Limpar</button>`:""}</div>`;
- const src=`<details class="legend"><summary>Sobre os sets adversários</summary><p class="muted">Os 42 Pokémon mais usados na mediana de Pikalytics, Baltimore, Frankfurt e Brisbane, mais 15 que apareceram nos times declarados do top 100 da ladder M-6 (poke.terurun.jp, 08/out): Mega Dragonite, Glimmora, Mega Aerodactyl, Primarina, Toxapex, Mega Blastoise, Maushold, Mega Scovillain, Ninetales-Alola, Hydreigon, Arcanine, Basculegion-F, Staraptor, Scizor e Heliolisk. Desses 15, só o Dragonite-Mega tem set de fonte (Modest, Dragon Pulse/Heat Wave/Extreme Speed); os outros são hipótese com a convenção 32/32. Os que mostram "M-6" no lugar do uso não têm share no Limitless. Desde 12/out o Garchomp tem dois sets no pool: Life Orb (Dragon Claw/Stomping Tantrum/Earthquake) e Choice Scarf (Jolly 32 Atk/32 Spe, 253 de Speed; Dragon Claw/Rock Slide/Stomping Tantrum, golpes do campeão de Recife e do campeão e do vice de Louisville). O Limitless soma os dois na mesma linha de uso, então o Scarf aparece marcado como "Scarf" em vez de uma porcentagem própria. Cada um usa a nature, o item e os golpes mais comuns nas team sheets das regionais, com a convenção de SP do projeto (atacantes 32/32; defensivos 32 HP/16 Def/18 SpD). Números da skill pokemon-champions-calc. Desde 01/out a escolha pondera cada Pokémon pela chance de ser levado e de abrir (533 replays públicos Bo3 de M-C com rating ≥ 1300), soma a evidência dos nossos jogos e dos replays públicos com o mesmo lead, e considera Fake Out provável, Wide Guard e a peça que sustenta o plano deles. Telas e Taunt ainda não entram. O Night Slash do Mega Absol-Z entra na nota sem crítico (a lista abaixo mostra o valor com crítico, depois do Focus Energy). Desde a v2.1 (01/out) o clima deles também entra: areia, chuva, sol ou neve podem sobrescrever o nosso e dobrar a Speed de Sand Rush, Swift Swim, Chlorophyll e Slush Rush. Fora do pool: a lista "Fora do cálculo" traz as outras espécies usadas nos eventos oficiais da M-C (share de pontos do Limitless VGC em 06/out, a partir de 0,45%) e as que apareceram nos nossos jogos; marque para receber o aviso. Desde 22/out, mais 46 espécies que apareceram nos seus replays ou nos replays públicos analisados (marcadas com o número de replays no lugar do uso): cada uma usa o set mais comum nas folhas de time desses replays (item, habilidade, nature e golpes), com a mesma convenção de SP (nature que aumenta Speed: 32 no ataque e 32 em Speed; Adamant/Modest com Speed base 90 ou mais: 32/32 em ataque e Speed, abaixo disso 32 HP/32 ataque; nature que reduz Speed: 32 HP/32 ataque; natures defensivas: 32 HP/16 Def/18 SpD). Metagross e Morpeko não tinham folha: usam os golpes vistos no log, sem item, com nature assumida (Adamant e Jolly). Simisear, Conkeldurr, Delphox, Froslass e Sableye (formas base) continuam sem cálculo por falta de golpe de dano conhecido. Em 22/out entraram também 24 espécies que antes apareciam só como "fora do cálculo", com o set das folhas de time dos replays e o uso do Limitless mantido; Lycanroc-Dusk usa o set do nosso T1 (sem folha nos replays) e Klefki usa o Steel Beam visto no log, com nature Calm assumida. Contra a Mega Lucario-Z, o dano de golpe de contato é dividido por 2 à mão (Aura Guard, que o motor não aplica). Electric Terrain (Mega Raichu-X) e Speed Boost não entram nas tabelas.</p></details>`;
- let res="";
- if(sel.length){const all=muBest(t,sel);const CH=muChoose(t,sel,all);const b=CH.b;const D=muDetail(t,sel,b);
+/* ===== FORMAS DO ADVERSÁRIO (29/out) =====
+   No preview só aparece a espécie. Quem tem mais de uma forma calculada (base, Mega, Mega X/Y/Z, Garchomp Scarf)
+   entra como "não sei": o lead sai da média das formas, pesada pelo uso; ao escolher a forma, o cálculo usa só ela.
+   Peso: % de uso nos eventos oficiais M-C (Limitless); sem esse dado, aparições nos 634 replays de 20/out convertidas
+   em % (n/634); sem nenhum dos dois, 0,3. Garchomp LO e Scarf dividem a mesma linha do Limitless (metade para cada).
+   Cada espécie incerta é tratada de forma independente (duas Megas possíveis entram com o peso de cada uma, sem impor
+   a regra de uma Mega por partida: no preview qualquer uma das duas pode ser a que evolui). Para não travar no celular,
+   entram os cenários mais prováveis até somar 95% (máx. 16); a % mostrada é a chance de cada forma nesses cenários. */
+const pctW=x=>x<.005?"<1%":Math.round(x*100)+"%";
+function varW(k){const p=MXD.POOL[k];if(!p)return 0;if(k==="garchomp"||k==="garchomp-scarf")return (p.u||0)/2;if(p.u!=null)return p.u;const m=/(\d+) replays?/.exec(p.lbl||"");return m?+m[1]/634*100:.3}
+function varLab(e,k){if(k==="garchomp-scarf")return "Base Scarf";if(e==="garchomp"&&k==="garchomp")return "Base LO";const m=/-mega(?:-([xyz]))?$/.exec(k);return m?(m[1]?"Mega "+m[1].toUpperCase():"Mega"):"Base"}
+function muResolve(){const fixed=[],unc=[],out=[],rows=[],W={};
+ for(const e of ST.oppSel){const E=ENTRY[e];if(!E)continue;const calc=E.v.filter(k=>MXD.POOL[k]);const ch=ST.oppVar[e];
+  if(ch&&E.v.includes(ch)){(MXD.POOL[ch]?fixed:out).push(ch);rows.push(ch);continue}
+  if(!calc.length){out.push(e);rows.push(e);continue}
+  if(calc.length===1){fixed.push(calc[0]);rows.push(calc[0]);continue}
+  const s=calc.reduce((a,k)=>a+varW(k),0)||1;const vars=calc.map(k=>[k,varW(k)/s]);vars.forEach(([k,w])=>{W[k]=w});unc.push({e,vars});rows.push(...calc)}
+ return {fixed,unc,out,rows,W}}
+function muScen(R){let sc=[{sel:[],p:1}];
+ for(const u of R.unc){const nx=[];for(const s of sc)for(const [k,w] of u.vars)nx.push({sel:s.sel.concat(k),p:s.p*w});sc=nx}
+ sc.sort((a,b)=>b.p-a.p);let z=sc.reduce((a,s)=>a+s.p,0)||1,c=0,n=0;for(const s of sc){c+=s.p/z;n++;if(c>=.95||n>=16)break}
+ sc=sc.slice(0,n);z=sc.reduce((a,s)=>a+s.p,0)||1;
+ return sc.map(s=>({sel:R.fixed.concat(s.sel),p:s.p/z}))}
+/* Com forma incerta: roda o cálculo em cada cenário e soma a nota de cada (lead, banco, modo) pesada pela chance do cenário.
+   Se um modo (TR/Tailwind) foi vetado num cenário, vale a melhor nota do mesmo lead e banco nesse cenário. */
+const MU_CACHE=new Map();
+function muBestMix(t,R){const ck=t.id+"|"+R.fixed.join()+"|"+R.unc.map(u=>u.vars.map(v=>v[0]).join("/")).join();if(MU_CACHE.has(ck))return MU_CACHE.get(ck);
+ const r=muBestMix0(t,R);r.W={};for(const s of r.sc)for(const k of s.sel)if(R.W[k]!=null)r.W[k]=(r.W[k]||0)+s.p;
+ if(MU_CACHE.size>30)MU_CACHE.clear();MU_CACHE.set(ck,r);return r}
+function muBestMix0(t,R){const sc=muScen(R);const per=sc.map(s=>muBest(t,s.sel));per.forEach((all,i)=>all.forEach(x=>{x._sel=sc[i].sel}));
+ if(sc.length===1)return {all:per[0],sc};
+ const kk=x=>x.L.join()+"|"+x.B.join();
+ const maps=per.map(all=>{const m=new Map(),mk=new Map();for(const x of all){const q=kk(x);m.set(q+"|"+x.mode,x.s);if(!mk.has(q)||mk.get(q)<x.s)mk.set(q,x.s)}return [m,mk]});
+ const cand=new Map();per.forEach(all=>all.forEach(x=>{const q=kk(x)+"|"+x.mode;if(!cand.has(q))cand.set(q,x)}));
+ const agg=[...cand.values()].map(x=>{const q=kk(x);let s=0;sc.forEach((S,i)=>{const [m,mk]=maps[i];s+=S.p*(m.has(q+"|"+x.mode)?m.get(q+"|"+x.mode):mk.has(q)?mk.get(q):x.s-3)});return Object.assign({},x,{s})});
+ agg.sort((a,b)=>b.s-a.s);return {all:agg,sc}}
+/* Seletor de forma (dentro de "Para este preview"): "Não sei" usa a média; cada forma recalcula lead e danos */
+function megaSel(R,WE){WE=WE||R.W;const es=ST.oppSel.filter(e=>ENTRY[e]&&ENTRY[e].v.length>1);if(!es.length)return "";
+ return `<div class="mgsel"><b class="bh">Forma do adversário (marque quando a Mega aparecer)</b>${es.map(e=>{const E=ENTRY[e];const ch=ST.oppVar[e]||"";const calc=E.v.filter(k=>MXD.POOL[k]);
+  const opt=(v,lab,sub)=>`<button class="mgo${ch===v?" on":""}${v&&!MXD.POOL[v]?" nc":""}" data-ov="${e}" data-ovv="${v}" aria-pressed="${ch===v}">${v?tile(v,"sm",{role:false}):`<span class="mgq" aria-hidden="true">?</span>`}<span>${esc(lab)}</span>${sub?`<small>${esc(sub)}</small>`:""}</button>`;
+  const qs=calc.length>1?"média":calc.length?"= "+varLab(e,calc[0]):"sem cálculo";
+  return `<div class="mgrow"><div class="mgn">${esc(spec(e).n)}</div><div class="mgopts">${opt("","Não sei",qs)}${E.v.map(v=>opt(v,varLab(e,v),!MXD.POOL[v]?"sem cálculo":!ch&&R.W[v]!=null?pctW(WE[v]||0):"")).join("")}</div></div>`}).join("")}</div>`}
+function vMatch(){const t=T();ST.oppVar=ST.oppVar||{};
+ ST.oppSel=[...new Set((ST.oppSel||[]).map(k=>ENTRY[k]?k:ENTRY_OF[k]).filter(k=>k&&ENTRY[k]))].slice(0,6);
+ for(const e of Object.keys(ST.oppVar))if(!ST.oppSel.includes(e)||!ENTRY[e].v.includes(ST.oppVar[e]))delete ST.oppVar[e];
+ const R=muResolve();const selAll=R.rows;const reg=ST.reg==="atalhos"||REGIONS.includes(ST.reg)?ST.reg:"atalhos";
+ const cnt=r=>ST.oppSel.filter(e=>ENTRY[e].r===r).length;
+ const regT=`<div class="seg regs" role="group" aria-label="Escolher região">${["atalhos"].concat(REGIONS).map(r=>{const on=r===reg,c=r==="atalhos"?0:cnt(r);return `<button data-reg="${r}" class="${on?"on":""}" aria-pressed="${on}">${r==="atalhos"?"Atalhos":r}${c?`<b class="rc">${c}</b>`:""}</button>`}).join("")}</div>`;
+ const coreLab=c=>esc(c.k.map(k=>spec(k).n).join(" + "));
+ const panel=reg==="atalhos"
+  ?`<div class="atal">${[2,3,4].map(n=>`<div class="acol"><b class="bh">${n} Pokémon</b>${CORES.map((c,i)=>c.n!==n?"":`<button class="acore" data-core="${i}" title="${coreLab(c)}" aria-label="${coreLab(c)}">${c.k.map(k=>tile(k,"sm",{role:false})).join("")}</button>`).join("")}</div>`).join("")}</div>`
+  :`<div class="opgrid rg">${ROSTER.filter(r=>r[4]===reg).map(r=>{const e=r[0],on=ST.oppSel.includes(e),nc=!ENTRY[e].v.some(k=>MXD.POOL[k]);return `<button class="opb${on?" on":""}${nc?" nc":""}" data-op="${e}" aria-pressed="${on}">${tile(e,"sm",{role:false})}<span>${esc(spec(e).n)}</span>${nc?"<small>sem cálculo</small>":""}</button>`}).join("")}</div>`;
+ const head=`<h1 class="h">Matchups <span>${t.id}</span></h1><div class="selbar"><b>${ST.oppSel.length}/6</b>${ST.oppSel.length?`<span class="mu-opp">${ST.oppSel.map(e=>`<button class="selt" data-op="${e}" title="Tirar ${esc(spec(e).n)}" aria-label="Tirar ${esc(spec(e).n)}">${tile(ST.oppVar[e]||e,"sm",{role:false})}</button>`).join("")}</span><button class="chip" data-clear="1">Limpar</button>`:`<span class="muted">Toque nos Pokémon do preview do adversário (até 6).</span>`}</div>`;
+ let res="";const nCalc=R.fixed.length+R.unc.length;
+ if(nCalc){const MX=muBestMix(t,R);const CH=muChoose(t,null,MX.all);const b=CH.b;const selS=b._sel||MX.sc[0].sel;const WE={};for(const k in R.W)WE[k]=(MX.W&&MX.W[k])||0;
+  const selD=R.rows.filter(o=>MXD.POOL[o]);const D=muDetail(t,selD,b);const unc=new Set(Object.keys(R.W));
+  const nm=o=>unc.has(o)?spec(ENTRY_OF[o]).n:spec(o).n;
   const whyRow=k=>`<div class="brow">${pk(k,"sm")}<p>${(D.lines[k]||[]).length?D.lines[k].map(esc).join("<br>"):'<span class="muted">Sem golpe de dano relevante nesses alvos: entra pela função (suporte, velocidade, resistência).</span>'}</p></div>`;
   const thr=D.thr.length?D.thr.map(x=>`<div class="row">${pk(x.o,"sm","",{role:false})}<p>${esc(x.w)}</p></div>`).join(""):`<p class="muted">Nenhum golpe deles passa de 40% nos leads.</p>`;
   const mx=Math.max(...D.spd.map(s=>s[2]));
-  const spdL=`<ol class="spd">${D.spd.map(([k,own,v,tags,nat])=>`<li class="${own?"own":"bench"}">${tile(k,"sm",{role:!!own})}<div class="sp-n"><b>${esc(spec(k).n)}</b>${own?`<span class="tm">${t.id}</span>`:`<span class="bm">adversário · ${esc(nat||"")}</span>`}${tags.length?`<span class="bm">${esc(tags.join(" · "))}</span>`:""}</div><div class="bar"><i style="width:${Math.max(4,v/mx*100)}%"></i></div><b class="val">${v}</b></li>`).join("")}</ol>`;
-  const vet=(t.avoid||[]).filter(r=>sel.filter(o=>r.keys.includes(o)).length>=(r.min||1));
+  const spdL=`<ol class="spd">${D.spd.map(([k,own,v,tags,nat])=>`<li class="${own?"own":"bench"}">${tile(k,"sm",{role:!!own})}<div class="sp-n"><b>${esc(spec(k).n)}</b>${own?`<span class="tm">${t.id}</span>`:`<span class="bm">adversário · ${esc(nat||"")}${unc.has(k)?" · forma possível":""}</span>`}${tags.length?`<span class="bm">${esc(tags.join(" · "))}</span>`:""}</div><div class="bar"><i style="width:${Math.max(4,v/mx*100)}%"></i></div><b class="val">${v}</b></li>`).join("")}</ol>`;
+  const vet=(t.avoid||[]).map(r=>{const hit=selD.filter(o=>r.keys.includes(o));return hit.length>=(r.min||1)?{r,cond:hit.every(o=>unc.has(o))?hit:null}:null}).filter(Boolean);
   const vk=k=>{const bf=BASEF[t.id]&&BASEF[t.id][k];return bf&&b.four.includes(bf.k)?bf.k:k};
-  const vetB=vet.length?`<div class="rule">${vet.map(r=>r.warn?`⚠️ ${esc(spec(vk(r.k)).n)} no lead é arriscado: ${esc(r.w)}`:`⛔ ${esc(spec(vk(r.k)).n)}${r.lead?" fora do lead":" fora dos 4"}: ${esc(r.w)}`).join("<br>")}</div>`:"";
-  const ev=b.ev||{o:[0,0],p:[0,0],e:0};const evT=(ev.o[0]+ev.o[1]||ev.p[0]+ev.p[1])?`Evidência deste lead: seus jogos ${ev.o[0]}–${ev.o[1]}; replays públicos (rating ≥ 1300) ${ev.p[0]}–${ev.p[1]}; peso na nota ${ev.e>=0?"+":""}${ev.e.toFixed(2).replace(".",",")}.`:"Sem jogos registrados com este lead: escolha só do cálculo.";
-  const src=`Escolha do cálculo ponderado pelo que eles costumam levar e abrir. ${evT}${b.docL?` No playbook: ${b.docL.plan}`:""}${(b.av||[]).length?" Contraria uma regra do time (ver abaixo); entrou com penalidade.":""}`;
-  const OP=muPlanOpp(t,sel,b.P,b.four,b.cA);const pc=x=>Math.round(x*100)+"%";
-  const oppB=`<div class="blk"><h4>🧭 Plano provável deles</h4><p>Leads mais prováveis: ${OP.leads.map(o=>esc(spec(o).n)+" ("+pc(b.P.pl[o])+")").join(" e ")}.${OP.en?` Controle de velocidade/campo: ${esc(OP.mode)} com ${esc(spec(OP.en).n)} (levado em ${pc(b.P.pt[OP.en])} dos jogos).`:" Sem setter de Trick Room, Tailwind ou clima no preview."} Maior ameaça aos nossos quatro: ${OP.wc?esc(spec(OP.wc).n):"—"}. Fake Out esperado no lead deles: ${OP.fo.toFixed(1).replace(".",",")}.${b.four.includes("sneasler")?` Chance de terreno psíquico para a Psychic Seed da Sneasler: ${pc(b.pA)}.`:""}${b.wxA?` Clima deles: ${({Sand:"areia",Rain:"chuva",Sun:"sol",Snow:"neve"})[b.wxA.w]} ativo em ${pc(b.wxA.p)} dos cenários${b.cA.w?", sobrescrevendo o nosso":""}${sel.filter(o=>MU_WSPD[MXD.POOL[o].ab]===b.wxA.w).length?"; "+sel.filter(o=>MU_WSPD[MXD.POOL[o].ab]===b.wxA.w).map(o=>spec(o).n+" com Speed dobrada").join(", "):""}.`:""}</p><p class="muted">Taxas de seleção e de lead de 533 replays públicos Bo3 (rating ≥ 1300); papéis pelos sets de 97 torneios M-C.</p></div>`;
-  res=`<section class="mudet"><div class="blk ok"><h4>🎯 Para este preview</h4>
+  const vetB=vet.length?`<div class="rule">${vet.map(({r,cond})=>(r.warn?`⚠️ ${esc(spec(vk(r.k)).n)} no lead é arriscado: ${esc(r.w)}`:`⛔ ${esc(spec(vk(r.k)).n)}${r.lead?" fora do lead":" fora dos 4"}: ${esc(r.w)}`)+(cond?` <i>Vale se vier ${esc(cond.map(o=>spec(o).n).join(" ou "))}.</i>`:"")).join("<br>")}</div>`:"";
+  const OP=muPlanOpp(t,selS,b.P,b.four,b.cA);const pc=x=>Math.round(x*100)+"%";
+  const oppB=`<div class="blk"><h4>🧭 Plano provável deles</h4><p>Leads mais prováveis: ${OP.leads.map(o=>esc(nm(o))+" ("+pc(b.P.pl[o])+")").join(" e ")}.${OP.en?` Controle de velocidade/campo: ${esc(OP.mode)} com ${esc(nm(OP.en))} (levado em ${pc(b.P.pt[OP.en])} dos jogos).`:" Sem setter de Trick Room, Tailwind ou clima no preview."} Maior ameaça aos nossos quatro: ${OP.wc?esc(nm(OP.wc)):"—"}. Fake Out esperado no lead deles: ${OP.fo.toFixed(1).replace(".",",")}.${b.four.includes("sneasler")?` Chance de terreno psíquico para a Psychic Seed da Sneasler: ${pc(b.pA)}.`:""}${b.wxA?` Clima deles: ${({Sand:"areia",Rain:"chuva",Sun:"sol",Snow:"neve"})[b.wxA.w]} ativo em ${pc(b.wxA.p)} dos cenários${b.cA.w?", sobrescrevendo o nosso":""}${selS.filter(o=>MU_WSPD[MXD.POOL[o].ab]===b.wxA.w).length?"; "+selS.filter(o=>MU_WSPD[MXD.POOL[o].ab]===b.wxA.w).map(o=>nm(o)+" com Speed dobrada").join(", "):""}.`:""}</p><p class="muted">Taxas de seleção e de lead de 533 replays públicos Bo3 (rating ≥ 1300); papéis pelos sets de 97 torneios M-C.</p></div>`;
+  res=`<section class="mudet"><div class="blk ok"><h4>🎯 Para este preview</h4>${megaSel(R,WE)}
    <div class="versus"><div class="side"><div class="lab">Leads</div><div class="duo">${pk(b.L[0],"md")}<span class="plus">+</span>${pk(b.L[1],"md")}</div></div><div class="vs">→</div><div class="side"><div class="lab">Banco</div><div class="duo">${pk(b.B[0],"md")}<span class="plus">+</span>${pk(b.B[1],"md")}</div></div></div>
-   <div class="gp"><b>Plano</b> ${esc(D.plan)}</div><p class="muted">${esc(src)}</p>
+   <div class="gp"><b>Plano</b> ${esc(D.plan)}</div>
    <div class="back"><b class="bh">O que cada um faz contra este preview</b>${[...b.L,...b.B].map(whyRow).join("")}</div>${vetB}</div>
-   ${oppB}${muDmg(t,selAll,b.cA.i)}<div class="blk warn"><h4>⚠️ Maiores ameaças aos leads</h4>${thr}</div>
+   ${oppB}${muDmg(t,selAll,b.cA.i,WE)}<div class="blk warn"><h4>⚠️ Maiores ameaças aos leads</h4>${thr}</div>
    <div class="blk"><h4>⏱️ Speed dos ${D.spd.length} Pokémon</h4>${spdL}<p class="muted">Adversário: nature mais usada nas regionais; SP em Speed pela convenção. Prioridade ignora a ordem acima.</p></div>
-   ${D.notes.length?`<div class="rule">📌 ${D.notes.map(esc).join("<br>📌 ")}</div>`:""}
    ${CH.alt.length?`<details class="legend"><summary>Outras opções</summary>${CH.alt.map(a=>`<div class="arow"><div class="four">${a.L.map(k=>tile(k,"sm")).join("")}<span class="plus sm">|</span>${a.B.map(k=>tile(k,"sm")).join("")}</div></div>`).join("")}<p class="muted">Leads à esquerda da barra, banco à direita.</p></details>`:""}</section>`}
- else res=`<p class="empty">Selecione os Pokémon do adversário para ver os 4 escolhidos, os leads, as ameaças e a Speed.</p>`+(outP.length?muDmg(t,selAll,null):"");
- return `${head}${grid}${extraG}${presets}${src}${outP.length&&sel.length?`<div class="rule">⚠️ ${outP.length} dos ${selAll.length} fora do cálculo: ${outP.map(o=>esc(spec(o).n)).join(", ")}. A sugestão abaixo considera só os outros ${sel.length}.</div>`:""}${res}${oldMatrix(t)}${credit}`}
+ else if(ST.oppSel.length)res=`<section class="mudet">${megaSel(R)}${muDmg(t,selAll,null,R.W)}</section>`;
+ else res=`<p class="empty">Selecione os Pokémon do adversário para ver os 4 escolhidos, os leads, as ameaças e a Speed.</p>`;
+ const warn=R.out.length?`<div class="rule">⚠️ ${R.out.length===ST.oppSel.length?"Nenhum dos selecionados tem cálculo":`${R.out.length} de ${ST.oppSel.length} sem cálculo`}: ${R.out.map(o=>esc(spec(o).n)).join(", ")}.${nCalc?` O lead considera só os outros ${nCalc}.`:""}</div>`:"";
+ return `${head}${regT}${panel}${warn}${res}${oldMatrix(t)}${credit}`}
 
 function oldMatrix(t){if(!t.matchups.length)return "";
  return `<details class="legend"><summary>${esc(t.mxTitle||"Matriz antiga por arquétipo (histórico)")}</summary><div class="mlist" style="margin-top:10px">${t.matchups.map((m,i)=>{const d=DIFF[m.diff];return `<details class="mu" ${i===ST.muOpen?"open":""} data-mu="${i}"><summary>
@@ -934,7 +1272,7 @@ function vGames(){
  <h2 class="h2">Últimas partidas</h2><ul class="glist">${[...g].sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.jogo||0)-(a.jogo||0)).slice(0,15).map(gameRow).join("")}</ul>
  ${formHTML()}${credit}`;}
 function fmtD(d){if(!d)return"";const[y,m,dd]=d.split("-");return `${dd}/${m}`}
-function oppPicker(){const pre=(ST.oppSel||[]);const top=Object.keys(MXD.POOL).sort((a,b)=>MXD.POOL[b].u-MXD.POOL[a].u);const rest=OPP_KEYS.filter(k=>!top.includes(k));
+function oppPicker(){const pre=(ST.oppSel||[]).map(e=>(ST.oppVar||{})[e]||e);const top=Object.keys(MXD.POOL).sort((a,b)=>MXD.POOL[b].u-MXD.POOL[a].u);const rest=OPP_KEYS.filter(k=>!top.includes(k));
  const box=k=>`<label class="opb${pre.includes(k)?" on":""}"><input type="checkbox" name="opp" value="${k}"${pre.includes(k)?" checked":""}>${tile(k,"sm",{role:false})}<span>${esc(spec(k).n)}</span></label>`;
  return `<fieldset class="fopp"><legend>Time adversário (até 6) <span class="muted" id="fcount">${pre.length}/6</span></legend><p class="muted">Os mais usados do meta primeiro. Já vem marcado o que você selecionou na aba Matchups.</p><div class="opgrid">${top.map(box).join("")}</div><details><summary>Outros Pokémon</summary><div class="opgrid">${rest.map(box).join("")}</div></details></fieldset>`}
 function formHTML(){if(ST.readOnly)return"";return `<details class="form"><summary>＋ Registrar partida</summary>
@@ -954,11 +1292,13 @@ document.addEventListener("click",e=>{
  if(b.dataset.team!=null){ST.team=+b.dataset.team;ST.pOpen=null;ST.muOpen=null;render();return}
  if(b.dataset.tab){ST.tab=b.dataset.tab;render();window.scrollTo(0,0);return}
  if(b.dataset.lf){ST.lf=b.dataset.lf;render();return}
- if(b.dataset.op){ST.oppSel=ST.oppSel||[];const o=b.dataset.op;const i=ST.oppSel.indexOf(o);if(i>=0)ST.oppSel.splice(i,1);else if(ST.oppSel.length<6)ST.oppSel.push(o);render();return}
- if(b.dataset.clear){ST.oppSel=[];render();return}
+ if(b.dataset.reg){ST.reg=b.dataset.reg;render();return}
+ if(b.dataset.ov!=null){ST.oppVar=ST.oppVar||{};const e=b.dataset.ov,v=b.dataset.ovv;if(v)ST.oppVar[e]=v;else delete ST.oppVar[e];render();return}
+ if(b.dataset.op){ST.oppSel=ST.oppSel||[];ST.oppVar=ST.oppVar||{};const o=ENTRY_OF[b.dataset.op]||b.dataset.op;const i=ST.oppSel.indexOf(o);if(i>=0){ST.oppSel.splice(i,1);delete ST.oppVar[o]}else if(ST.oppSel.length<6)ST.oppSel.push(o);render();return}
+ if(b.dataset.clear){ST.oppSel=[];ST.oppVar={};render();return}
  if(b.dataset.ddir){ST.ddir=b.dataset.ddir;render();return}
  if(b.dataset.dctx!=null){ST.dctx=ST.dctx||{};ST.dctx[T().id]=+b.dataset.dctx;render();return}
- if(b.dataset.core!=null){ST.oppSel=CORES[+b.dataset.core].k.slice();render();const d=document.querySelector('.mudet');if(d&&d.scrollIntoView)d.scrollIntoView({behavior:'smooth',block:'start'});return}
+ if(b.dataset.core!=null){ST.oppSel=[...new Set(CORES[+b.dataset.core].k.map(k=>ENTRY_OF[k]||k))];ST.oppVar={};render();const d=document.querySelector('.mudet');if(d&&d.scrollIntoView)d.scrollIntoView({behavior:'smooth',block:'start'});return}
  if(b.dataset.sm){ST.spdMode=b.dataset.sm;render();return}
  if(b.dataset.ss){ST.spdScope=b.dataset.ss;render();return}
  if(b.dataset.ps){ST.pScope=b.dataset.ps;ST.pOpen=null;render();return}
